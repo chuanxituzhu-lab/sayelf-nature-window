@@ -206,6 +206,18 @@ Enter → Enclose → Guide → Reveal
 
 ---
 
+## 视觉表现层 / Visual Treatment
+
+在不改变 `Enter → Enclose → Guide → Reveal` 的前提下，生成器现在支持三种可切换的视觉表现档位：
+
+- **自然克制 / Natural restraint**：保持真实曝光、自然层次和克制的色彩关系。
+- **反差增强 / Strong contrast**：加强明暗反差、冷暖色温对比与前后景尺度差异，让隐藏窗口从包围中跳出。
+- **视觉冲击 / High visual impact**：使用强烈但可信的明暗与色彩对照、夸张近景尺度和明确视觉钩子，形成第一眼冲击与深处发现。
+
+WebUI 默认使用“视觉冲击”，API 可通过 `visual_style` 传入 `natural`、`contrast` 或 `impact`。每次生成还会根据场景主色自动计算饱和度、色相对比和明亮度层次。所有调整只改变光影、色彩、尺度与焦点表达，不改变冻结的 Core Grammar。
+
+---
+
 ## Scene Composer
 
 除了选择预设场景，还可以动态组合不存在于场景库中的新场景。

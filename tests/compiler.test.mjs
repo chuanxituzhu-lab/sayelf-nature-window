@@ -25,6 +25,28 @@ test("English prompt compiles", () => {
   assert.match(out.prompt, /Single visual hook/);
 });
 
+test("visual impact profiles strengthen treatment without changing the core grammar", () => {
+  const out = generatePrompt({ scene: "lotus_pond", language: "zh", visualStyle: "impact", seed: 19 });
+  assert.equal(out.visual_style, "impact");
+  assert.match(out.prompt, /视觉表现（视觉冲击）/);
+  assert.match(out.prompt, /强烈但可信的明暗对比/);
+  assert.deepEqual(out.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
+});
+
+test("color plan adapts to scene hue family and exposes saturation, hue and brightness", () => {
+  const green = generatePrompt({ scene: "lotus_pond", language: "zh", visualStyle: "impact", seed: 20 });
+  assert.equal(green.color_plan.family, "green");
+  assert.ok(green.color_plan.saturation.zh);
+  assert.ok(green.color_plan.hue.zh);
+  assert.ok(green.color_plan.brightness.zh);
+  assert.match(green.prompt, /智能色彩调整：饱和度/);
+
+  const warm = generatePrompt({ scene: "autumn_maple", language: "en", visualStyle: "contrast", seed: 21 });
+  assert.equal(warm.color_plan.family, "warm");
+  assert.match(warm.prompt, /Smart color adjustment: saturation/);
+  assert.match(warm.prompt, /cool blue, teal or cyan/);
+});
+
 test("overrides are applied", () => {
   const out = generatePrompt({
     scene: "winter_branches",

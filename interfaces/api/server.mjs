@@ -32,14 +32,16 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, generatePrompt({
         scene: body.scene,
         language: body.language || "zh",
-        overrides: body.overrides || {}
+        overrides: body.overrides || {},
+        visualStyle: body.visual_style || body.visualStyle || "natural"
       }));
     }
     if (req.method === "POST" && req.url === "/v1/one-click") {
       const body = await readJson(req);
       return send(res, 200, oneClick({
         language: body.language || "zh",
-        seed: Number.isInteger(body.seed) ? body.seed : undefined
+        seed: Number.isInteger(body.seed) ? body.seed : undefined,
+        visualStyle: body.visual_style || body.visualStyle || "natural"
       }));
     }
     if (req.method === "POST" && req.url === "/v1/compose") {
@@ -47,7 +49,8 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, await generateComposedPrompt({
         input: body.input || {},
         language: body.language || "zh",
-        seed: Number.isInteger(body.seed) ? body.seed : Date.now()
+        seed: Number.isInteger(body.seed) ? body.seed : Date.now(),
+        visualStyle: body.visual_style || body.visualStyle || "natural"
       }));
     }
     if (req.method === "POST" && req.url === "/v1/series") {
@@ -58,7 +61,8 @@ const server = http.createServer(async (req, res) => {
           language: body.language || "zh",
           count: Number.isInteger(body.count) ? body.count : 6,
           seed: Number.isInteger(body.seed) ? body.seed : 1,
-          overrides: body.overrides || {}
+          overrides: body.overrides || {},
+          visualStyle: body.visual_style || body.visualStyle || "natural"
         })
       });
     }

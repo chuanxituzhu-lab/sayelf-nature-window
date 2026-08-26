@@ -1,5 +1,6 @@
 const sceneEl = document.querySelector("#scene");
 const langEl = document.querySelector("#language");
+const visualStyleEl = document.querySelector("#visualStyle");
 const outputEl = document.querySelector("#output");
 const metaEl = document.querySelector("#meta");
 
@@ -21,6 +22,7 @@ async function generate() {
   const body = {
     scene: sceneEl.value,
     language: langEl.value,
+    visual_style: visualStyleEl.value,
     overrides: {
       emotion: document.querySelector("#emotion").value.trim(),
       hook: document.querySelector("#hook").value.trim(),
@@ -40,7 +42,7 @@ async function oneClickPrompt() {
   const data = await json("/v1/one-click", {
     method: "POST",
     headers: {"content-type":"application/json"},
-    body: JSON.stringify({ language: langEl.value })
+    body: JSON.stringify({ language: langEl.value, visual_style: visualStyleEl.value })
   });
   sceneEl.value = data.scene_id;
   outputEl.value = data.prompt;
@@ -62,6 +64,7 @@ loadScenes().catch(error => {
 async function composeScenePrompt() {
   const body = {
     language: langEl.value,
+    visual_style: visualStyleEl.value,
     input: {
       plant: document.querySelector("#plant").value,
       location: document.querySelector("#location").value,
@@ -80,6 +83,7 @@ async function composeScenePrompt() {
 async function composeSeriesPrompt() {
   const base = {
     language: langEl.value,
+    visual_style: visualStyleEl.value,
     input: {
       plant: document.querySelector("#plant").value,
       location: document.querySelector("#location").value,
