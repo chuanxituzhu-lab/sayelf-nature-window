@@ -227,7 +227,7 @@ export function generatePrompt({ scene, language = "zh", overrides = {}, seed = 
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.4.0",
+    version: "0.5.0",
     scene_id: scene,
     scene: resolved,
     seed,
@@ -277,7 +277,7 @@ export async function generateComposedPrompt({
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.4.0",
+    version: "0.5.0",
     source: "composed",
     scene,
     seed,

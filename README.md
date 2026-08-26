@@ -7,6 +7,18 @@
 
 `Nature Window` is an AI-agent-native visual narrative skill for nature imagery. It turns a stable photographic grammar into a callable, composable, and extensible prompt capability. Agents such as Codex, Claude Code, and WorkBuddy can generate Chinese or English prompts through MCP, CLI, or HTTP API while preserving one visual DNA across many different scenes.
 
+## 当前版本 / Current Release
+
+**v0.5.0 — 视觉冲击与智能色彩控制 / Visual Impact & Smart Color Control**
+
+本版本在保持 `Enter → Enclose → Guide → Reveal` 核心机制与既有架构不变的基础上，新增：
+
+- **三档视觉风格**：自然、反差增强、视觉冲击，可在 WebUI、API 和生成器中调用。
+- **智能色彩策略**：根据场景色彩家族自动计算饱和度、色相和明亮度，并写入结构化 `color_plan`。
+- **版本化更新**：仓库原地持续更新；每次功能更新递增 SemVer 版本号，并同步运行时版本与 Git 标签。后续请以版本号和本节更新摘要为准。
+
+This release preserves the frozen core mechanism and existing architecture while adding three visual-style profiles, automatic saturation/hue/brightness planning, and structured `color_plan` output. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
+
 ![Nature Window core overview](assets/nature-window-overview.png)
 
 ---
