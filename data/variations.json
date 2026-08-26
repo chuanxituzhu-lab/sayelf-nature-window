@@ -1,0 +1,200 @@
+{
+  "time": [
+    {
+      "zh": "清晨第一束低角度自然光",
+      "en": "the first low-angle natural light of early morning"
+    },
+    {
+      "zh": "正午清澈高位天光",
+      "en": "clear high midday skylight"
+    },
+    {
+      "zh": "下午偏暖的侧向自然光",
+      "en": "warm side light in the afternoon"
+    },
+    {
+      "zh": "日落前最后一段低角度暖光",
+      "en": "the last low warm light before sunset"
+    },
+    {
+      "zh": "阴天均匀柔和的漫射光",
+      "en": "soft even diffuse light under an overcast sky"
+    }
+  ],
+  "weather": [
+    {
+      "zh": "空气清澈干净",
+      "en": "clear clean air"
+    },
+    {
+      "zh": "雨后叶片仍带水珠",
+      "en": "leaves still carrying droplets after rain"
+    },
+    {
+      "zh": "轻微薄雾停留在远处",
+      "en": "a faint mist lingering in the distance"
+    },
+    {
+      "zh": "微风刚刚经过，少量叶片仍在偏转",
+      "en": "a light breeze has just passed and a few leaves are still turned"
+    },
+    {
+      "zh": "空气略带潮湿感但能见度很高",
+      "en": "slightly humid air with high visibility"
+    }
+  ],
+  "camera_micro": [
+    {
+      "zh": "镜头比植物根部略低，向上寻找出口",
+      "en": "camera slightly below the plant base, looking upward for an exit"
+    },
+    {
+      "zh": "镜头被前景叶片压低，只留下狭窄视线",
+      "en": "foreground leaves press close to the lens, leaving a narrow sightline"
+    },
+    {
+      "zh": "镜头向一侧轻微偏移，让通道形成非对称斜向透视",
+      "en": "camera shifted slightly to one side, creating an asymmetric diagonal corridor"
+    },
+    {
+      "zh": "镜头极贴近地表，前景尺度被夸张放大",
+      "en": "camera almost touching the ground, exaggerating foreground scale"
+    },
+    {
+      "zh": "镜头沿自然缝隙向前探入，形成更强的穿行感",
+      "en": "camera probing forward through a natural gap for a stronger sense of passage"
+    }
+  ],
+  "window_shape": [
+    {
+      "zh": "窗口狭长而不规则",
+      "en": "the window is narrow and irregular"
+    },
+    {
+      "zh": "窗口偏离画面中心约三分之一",
+      "en": "the window sits about one third off center"
+    },
+    {
+      "zh": "窗口被几片近景叶片部分遮住",
+      "en": "the window is partially occluded by a few near leaves"
+    },
+    {
+      "zh": "窗口更小，只占画面很少面积",
+      "en": "the window is smaller and occupies very little of the frame"
+    },
+    {
+      "zh": "窗口略微扩大，但仍保持克制",
+      "en": "the window is slightly wider but still restrained"
+    }
+  ],
+  "moment": [
+    {
+      "zh": "一片叶子刚刚转动并捕捉到光",
+      "en": "one leaf has just turned and caught the light"
+    },
+    {
+      "zh": "一滴水珠正从叶尖落下",
+      "en": "a droplet is just falling from a leaf tip"
+    },
+    {
+      "zh": "一朵小花刚被风压向通道方向",
+      "en": "a small flower has just been bent toward the corridor by the breeze"
+    },
+    {
+      "zh": "远处亮部第一次穿透植物间隙",
+      "en": "distant light has just broken through the vegetation gap"
+    },
+    {
+      "zh": "前景一片叶子刚离开镜头中心，露出后方窗口",
+      "en": "a foreground leaf has just moved away from the lens center, revealing the window"
+    }
+  ],
+  "seasonal_trace": [
+    {
+      "zh": "植物处于刚刚萌发的早期状态",
+      "en": "vegetation is in an early emerging state"
+    },
+    {
+      "zh": "植物处于最茂盛的生长期",
+      "en": "vegetation is at peak growth"
+    },
+    {
+      "zh": "少量叶缘已经出现季节转换痕迹",
+      "en": "a few leaf edges show signs of seasonal transition"
+    },
+    {
+      "zh": "环境保留上一场雨或露水留下的痕迹",
+      "en": "the environment retains traces of recent rain or dew"
+    },
+    {
+      "zh": "少量枯叶与新叶同时存在",
+      "en": "a few old leaves coexist with fresh growth"
+    }
+  ],
+  "foreground_occlusion": [
+    {
+      "zh": "一片巨大近景叶片从左上角压入",
+      "en": "one huge near leaf enters from the upper left"
+    },
+    {
+      "zh": "两根近景茎秆交错经过镜头边缘",
+      "en": "two near stems cross along the lens edge"
+    },
+    {
+      "zh": "前景只保留一处柔和失焦遮挡",
+      "en": "keep only one softly defocused foreground occlusion"
+    },
+    {
+      "zh": "下方近景植物占据更多面积，强化钻入感",
+      "en": "lower foreground vegetation occupies more space to strengthen immersion"
+    },
+    {
+      "zh": "右侧近景叶缘擦过画面但不遮住窗口",
+      "en": "a near leaf edge brushes the right frame without covering the window"
+    }
+  ],
+  "depth_rhythm": [
+    {
+      "zh": "前景极近，中景拉长，远处窗口很小",
+      "en": "extremely close foreground, elongated midground, very small distant window"
+    },
+    {
+      "zh": "前景克制，中景植物层次最丰富",
+      "en": "restrained foreground with the richest layering in the midground"
+    },
+    {
+      "zh": "通过植物尺寸连续递减强化纵深",
+      "en": "strengthen depth through continuous reduction in plant scale"
+    },
+    {
+      "zh": "利用三次自然遮挡形成层层推进",
+      "en": "use three natural occlusion stages to create progressive depth"
+    },
+    {
+      "zh": "通道先窄后略微打开，再收束到窗口",
+      "en": "the corridor narrows, opens slightly, then converges toward the window"
+    }
+  ],
+  "hook_state": [
+    {
+      "zh": "视觉钩子保持静止，周围植物有轻微运动痕迹",
+      "en": "the visual hook stays still while surrounding plants show slight motion"
+    },
+    {
+      "zh": "视觉钩子只被一小块自然光命中",
+      "en": "only a small patch of natural light hits the visual hook"
+    },
+    {
+      "zh": "视觉钩子部分被叶片遮挡，避免刻意展示",
+      "en": "the visual hook is partly hidden by leaves to avoid staged presentation"
+    },
+    {
+      "zh": "视觉钩子位于窗口附近但不与窗口重叠",
+      "en": "the visual hook sits near but does not overlap the window"
+    },
+    {
+      "zh": "视觉钩子位于中景，远景只保留出口",
+      "en": "the visual hook stays in the midground while the far layer contains only the exit"
+    }
+  ]
+}

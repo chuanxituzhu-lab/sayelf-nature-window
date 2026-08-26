@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "hidden-nature-window": {
+      "command": "node",
+      "args": ["interfaces/mcp/server.mjs"]
+    }
+  }
+}

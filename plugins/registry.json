@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "plugins": [
+    {
+      "id": "builtin-scenes",
+      "type": "scene-provider",
+      "enabled": true,
+      "source": "../data/scenes.json",
+      "priority": 100
+    },
+    {
+      "id": "builtin-variations",
+      "type": "variation-provider",
+      "enabled": true,
+      "source": "../data/variations.json",
+      "priority": 100
+    },
+    {
+      "id": "rule-based-scene-composer",
+      "type": "composer-provider",
+      "enabled": true,
+      "module": "./plugins/composer-providers/rule-based.mjs",
+      "priority": 100
+    }
+  ]
+}

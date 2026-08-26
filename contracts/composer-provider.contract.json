@@ -1,0 +1,12 @@
+{
+  "contract": "hidden-window.composer-provider",
+  "version": "1.0",
+  "required": [
+    "id",
+    "type",
+    "enabled",
+    "module"
+  ],
+  "allowed_type": "composer-provider",
+  "output": "dynamic SceneSpec"
+}

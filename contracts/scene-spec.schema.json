@@ -1,0 +1,24 @@
+{
+  "$id": "hidden-window.scene-spec.v1",
+  "type": "object",
+  "required": [
+    "name_zh",
+    "name_en",
+    "plant_zh",
+    "plant_en",
+    "entry_zh",
+    "entry_en",
+    "enclosure_zh",
+    "enclosure_en",
+    "window_zh",
+    "window_en",
+    "hook_zh",
+    "hook_en",
+    "light_zh",
+    "light_en",
+    "emotion_zh",
+    "emotion_en",
+    "dominant_zh",
+    "dominant_en"
+  ]
+}

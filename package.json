@@ -1,0 +1,21 @@
+{
+  "name": "sayelf-nature-window",
+  "version": "0.4.0",
+  "private": false,
+  "type": "module",
+  "description": "AI-agent-native visual grammar for discovering the world from inside nature.",
+  "license": "MIT",
+  "bin": {
+    "hidden-window": "./interfaces/cli/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "cli": "node interfaces/cli/index.mjs",
+    "api": "node interfaces/api/server.mjs",
+    "mcp": "node interfaces/mcp/server.mjs",
+    "web": "node interfaces/api/server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.4"
+  }
+}

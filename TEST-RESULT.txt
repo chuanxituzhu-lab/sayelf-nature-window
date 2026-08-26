@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: scene catalog is non-empty
+ok 1 - scene catalog is non-empty
+  ---
+  duration_ms: 2.159208
+  type: 'test'
+  ...
+# Subtest: visual grammar remains frozen
+ok 2 - visual grammar remains frozen
+  ---
+  duration_ms: 3.117373
+  type: 'test'
+  ...
+# Subtest: Chinese prompt compiles
+ok 3 - Chinese prompt compiles
+  ---
+  duration_ms: 10.318676
+  type: 'test'
+  ...
+# Subtest: English prompt compiles
+ok 4 - English prompt compiles
+  ---
+  duration_ms: 1.316616
+  type: 'test'
+  ...
+# Subtest: overrides are applied
+ok 5 - overrides are applied
+  ---
+  duration_ms: 0.840308
+  type: 'test'
+  ...
+# Subtest: one-click can be deterministic with seed
+ok 6 - one-click can be deterministic with seed
+  ---
+  duration_ms: 27.305154
+  type: 'test'
+  ...
+# Subtest: same scene can produce different series prompts while grammar stays frozen
+ok 7 - same scene can produce different series prompts while grammar stays frozen
+  ---
+  duration_ms: 23.678701
+  type: 'test'
+  ...
+# Subtest: same scene + same seed stays reproducible
+ok 8 - same scene + same seed stays reproducible
+  ---
+  duration_ms: 1.939632
+  type: 'test'
+  ...
+# Subtest: expanded scene library contains distinct ecosystems
+ok 9 - expanded scene library contains distinct ecosystems
+  ---
+  duration_ms: 1.041246
+  type: 'test'
+  ...
+# Subtest: expanded variations never mutate frozen grammar
+ok 10 - expanded variations never mutate frozen grammar
+  ---
+  duration_ms: 12.606946
+  type: 'test'
+  ...
+# Subtest: scene catalog now loads through plugin registry
+ok 11 - scene catalog now loads through plugin registry
+  ---
+  duration_ms: 0.438018
+  type: 'test'
+  ...
+# Subtest: dynamic composer creates a valid scene without touching core grammar
+ok 12 - dynamic composer creates a valid scene without touching core grammar
+  ---
+  duration_ms: 84.554199
+  type: 'test'
+  ...
+# Subtest: composed prompt preserves frozen core grammar
+ok 13 - composed prompt preserves frozen core grammar
+  ---
+  duration_ms: 1.470324
+  type: 'test'
+  ...
+# Subtest: composer supports reproducible series diversity by seed
+ok 14 - composer supports reproducible series diversity by seed
+  ---
+  duration_ms: 24.918852
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 411.730082

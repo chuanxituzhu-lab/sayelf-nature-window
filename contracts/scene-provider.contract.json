@@ -1,0 +1,12 @@
+{
+  "contract": "hidden-window.scene-provider",
+  "version": "1.0",
+  "required": [
+    "id",
+    "type",
+    "enabled",
+    "source"
+  ],
+  "allowed_type": "scene-provider",
+  "output": "scene catalog fragment keyed by scene_id"
+}

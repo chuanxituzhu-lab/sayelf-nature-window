@@ -1,0 +1,12 @@
+{
+  "contract": "hidden-window.variation-provider",
+  "version": "1.0",
+  "required": [
+    "id",
+    "type",
+    "enabled",
+    "source"
+  ],
+  "allowed_type": "variation-provider",
+  "output": "variation axes keyed by axis name"
+}
