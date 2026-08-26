@@ -54,7 +54,9 @@ document.querySelector("#copy").onclick = async () => {
 };
 document.querySelector("#clear").onclick = () => { outputEl.value = ""; metaEl.textContent = ""; };
 
-await loadScenes();
+loadScenes().catch(error => {
+  metaEl.textContent = `场景加载失败：${error.message}`;
+});
 
 
 async function composeScenePrompt() {
