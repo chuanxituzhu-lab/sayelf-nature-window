@@ -9,15 +9,18 @@
 
 ## 当前版本 / Current Release
 
-**v0.5.0 — 视觉冲击与智能色彩控制 / Visual Impact & Smart Color Control**
+**v0.6.1 — 自动匹配与高级自定义 / Automatic Matching + Advanced Customization**
 
 本版本在保持 `Enter → Enclose → Guide → Reveal` 核心机制与既有架构不变的基础上，新增：
 
+- **普通用户自动匹配**：留空即可，系统根据场景和视觉表现自动匹配视觉钩子、情绪与隐藏窗口；复杂规则不需要用户理解。
+- **高级用户可选择自定义**：在高级设置中切换到“高级用户自定义”，可填写任意需要改变的项目；未填写的项目仍自动匹配。
+- **透明结果说明**：生成结果返回结构化 `auto_match`，明确显示匹配到的内容；需要时仍可展开高级设置手动覆盖。
 - **三档视觉风格**：自然、反差增强、视觉冲击，可在 WebUI、API 和生成器中调用。
 - **智能色彩策略**：根据场景色彩家族自动计算饱和度、色相和明亮度，并写入结构化 `color_plan`。
 - **版本化更新**：仓库原地持续更新；每次功能更新递增 SemVer 版本号，并同步运行时版本与 Git 标签。后续请以版本号和本节更新摘要为准。
 
-This release preserves the frozen core mechanism and existing architecture while adding three visual-style profiles, automatic saturation/hue/brightness planning, and structured `color_plan` output. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
+This release preserves the frozen core mechanism and existing architecture while making hook, emotion, and hidden-window selection automatic by default. It also exposes structured `auto_match`, three visual-style profiles, and automatic saturation/hue/brightness planning through `color_plan`. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
 
 ![Nature Window core overview](assets/nature-window-overview.png)
 

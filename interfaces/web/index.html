@@ -18,6 +18,12 @@
     button { cursor:pointer; font-weight:700; }
     .actions { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px; }
     .small { font-size:12px; opacity:.65; }
+    #meta { white-space:pre-line; }
+    .helper { margin:10px 0 0; font-size:13px; color:#c9e2c8; }
+    details { margin-top:16px; border-top:1px solid #344136; padding-top:14px; }
+    summary { cursor:pointer; font-weight:700; color:#d9ead8; }
+    details .grid { margin-top:14px; }
+    #manualFields[hidden] { display:none; }
     @media (max-width:720px){ .grid,.actions { grid-template-columns:1fr; } }
   </style>
 </head>
@@ -48,19 +54,39 @@
           <option value="impact" selected>视觉冲击 / High visual impact</option>
         </select>
       </div>
-      <div>
-        <label for="emotion">情绪覆盖（可选）</label>
-        <input id="emotion" placeholder="例如：思念 / quiet curiosity">
-      </div>
-      <div>
-        <label for="hook">视觉钩子覆盖（可选）</label>
-        <input id="hook" placeholder="例如：唯一一朵红花">
-      </div>
-      <div>
-        <label for="window">隐藏窗口覆盖（可选）</label>
-        <input id="window" placeholder="例如：枝叶之间的一小块蓝天">
-      </div>
     </div>
+
+    <p class="helper">普通用户无需理解规则：留空即可，系统会根据场景和视觉表现自动匹配视觉钩子、情绪与隐藏窗口。</p>
+
+    <details>
+      <summary>高级设置：选择自动匹配或自定义</summary>
+      <div class="grid">
+        <div>
+          <label for="matchMode">匹配方式</label>
+          <select id="matchMode">
+            <option value="auto" selected>自动匹配（推荐）</option>
+            <option value="manual">高级用户自定义</option>
+          </select>
+        </div>
+      </div>
+      <div id="manualFields" hidden>
+        <p class="small">高级用户可填写需要改变的项目；留空的项目仍由系统自动匹配。</p>
+        <div class="grid">
+          <div>
+            <label for="emotion">情绪自定义</label>
+            <input id="emotion" placeholder="例如：思念 / quiet curiosity">
+          </div>
+          <div>
+            <label for="hook">视觉钩子自定义</label>
+            <input id="hook" placeholder="例如：唯一一朵红花">
+          </div>
+          <div>
+            <label for="window">隐藏窗口自定义</label>
+            <input id="window" placeholder="例如：枝叶之间的一小块蓝天">
+          </div>
+        </div>
+      </div>
+    </details>
 
     <div class="actions">
       <button id="generate">生成提示词</button>

@@ -1,8 +1,35 @@
 const sceneEl = document.querySelector("#scene");
 const langEl = document.querySelector("#language");
 const visualStyleEl = document.querySelector("#visualStyle");
+const matchModeEl = document.querySelector("#matchMode");
+const manualFieldsEl = document.querySelector("#manualFields");
 const outputEl = document.querySelector("#output");
 const metaEl = document.querySelector("#meta");
+
+function getManualOverrides() {
+  if (matchModeEl.value !== "manual") return {};
+  return {
+    emotion: document.querySelector("#emotion").value.trim(),
+    hook: document.querySelector("#hook").value.trim(),
+    window: document.querySelector("#window").value.trim()
+  };
+}
+
+function updateMatchMode() {
+  manualFieldsEl.hidden = matchModeEl.value !== "manual";
+}
+
+function updateMeta(data, prefix) {
+  const match = data.auto_match;
+  if (!match) {
+    metaEl.textContent = prefix;
+    return;
+  }
+  const hook = langEl.value === "en" ? match.visual_hook.en : match.visual_hook.zh;
+  const emotion = langEl.value === "en" ? match.emotion.en : match.emotion.zh;
+  const windowText = langEl.value === "en" ? match.hidden_window.en : match.hidden_window.zh;
+  metaEl.textContent = `${prefix} · ${match.mode_zh}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}`;
+}
 
 async function json(url, options) {
   const res = await fetch(url, options);
@@ -23,11 +50,7 @@ async function generate() {
     scene: sceneEl.value,
     language: langEl.value,
     visual_style: visualStyleEl.value,
-    overrides: {
-      emotion: document.querySelector("#emotion").value.trim(),
-      hook: document.querySelector("#hook").value.trim(),
-      window: document.querySelector("#window").value.trim()
-    }
+    overrides: getManualOverrides()
   };
   const data = await json("/v1/prompt", {
     method: "POST",
@@ -35,7 +58,7 @@ async function generate() {
     body: JSON.stringify(body)
   });
   outputEl.value = data.prompt;
-  metaEl.textContent = `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`;
+  updateMeta(data, `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`);
 }
 
 async function oneClickPrompt() {
@@ -46,7 +69,7 @@ async function oneClickPrompt() {
   });
   sceneEl.value = data.scene_id;
   outputEl.value = data.prompt;
-  metaEl.textContent = `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`;
+  updateMeta(data, `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`);
 }
 
 document.querySelector("#generate").onclick = () => generate().catch(e => alert(e.message));
@@ -55,6 +78,9 @@ document.querySelector("#copy").onclick = async () => {
   await navigator.clipboard.writeText(outputEl.value);
 };
 document.querySelector("#clear").onclick = () => { outputEl.value = ""; metaEl.textContent = ""; };
+
+matchModeEl.onchange = updateMatchMode;
+updateMatchMode();
 
 loadScenes().catch(error => {
   metaEl.textContent = `场景加载失败：${error.message}`;
@@ -77,7 +103,7 @@ async function composeScenePrompt() {
     body: JSON.stringify(body)
   });
   outputEl.value = data.prompt;
-  metaEl.textContent = `动态组合 · ${data.scene.name_zh} / ${data.scene.name_en}`;
+  updateMeta(data, `动态组合 · ${data.scene.name_zh} / ${data.scene.name_en}`);
 }
 
 async function composeSeriesPrompt() {

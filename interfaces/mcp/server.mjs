@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { generatePrompt, listScenes, oneClick, series, generateComposedPrompt } from "../../core/compiler.mjs";
 
-const server = new McpServer({ name: "hidden-nature-window", version: "0.5.0" });
+const server = new McpServer({ name: "hidden-nature-window", version: "0.6.1" });
 
 server.tool("hidden_window_list_scenes", "List available natural-scene presets.", {}, async () => ({
   content: [{ type: "text", text: JSON.stringify(listScenes(), null, 2) }]

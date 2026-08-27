@@ -47,6 +47,22 @@ test("color plan adapts to scene hue family and exposes saturation, hue and brig
   assert.match(warm.prompt, /cool blue, teal or cyan/);
 });
 
+test("automatic matching is the default and manual overrides remain optional", () => {
+  const automatic = generatePrompt({ scene: "lotus_pond", language: "zh", seed: 22 });
+  assert.equal(automatic.auto_match.mode, "automatic");
+  assert.equal(automatic.auto_match.visual_hook.zh, automatic.scene.hook_zh);
+  assert.equal(automatic.auto_match.emotion.zh, automatic.scene.emotion_zh);
+  assert.equal(automatic.auto_match.hidden_window.zh, automatic.scene.window_zh);
+
+  const manual = generatePrompt({
+    scene: "lotus_pond",
+    language: "zh",
+    overrides: { hook: "一只停在荷叶边的小蜻蜓" }
+  });
+  assert.equal(manual.auto_match.mode, "automatic_with_manual_overrides");
+  assert.deepEqual(manual.auto_match.manual_overrides, ["hook"]);
+});
+
 test("overrides are applied", () => {
   const out = generatePrompt({
     scene: "winter_branches",

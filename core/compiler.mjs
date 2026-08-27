@@ -84,6 +84,22 @@ function resolveVisualStyle(styleId = "natural") {
   return { id, ...VISUAL_STYLES[id] };
 }
 
+function buildAutoMatch(scene, style, overrides = {}) {
+  const manualOverrides = ["hook", "emotion", "window"]
+    .filter(key => overrides?.[key] != null && overrides[key] !== "");
+  const manual = manualOverrides.length > 0;
+  return {
+    mode: manual ? "automatic_with_manual_overrides" : "automatic",
+    mode_zh: manual ? "自动匹配 + 手动覆盖" : "自动匹配",
+    mode_en: manual ? "Automatic + manual overrides" : "Automatic",
+    visual_style: { id: style.id, zh: style.name_zh, en: style.name_en },
+    visual_hook: { zh: scene.hook_zh, en: scene.hook_en },
+    emotion: { zh: scene.emotion_zh, en: scene.emotion_en },
+    hidden_window: { zh: scene.window_zh, en: scene.window_en },
+    manual_overrides: manualOverrides
+  };
+}
+
 export function loadScenes() {
   return loadJsonProviders("scene-provider");
 }
@@ -227,13 +243,14 @@ export function generatePrompt({ scene, language = "zh", overrides = {}, seed = 
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.5.0",
+    version: "0.6.1",
     scene_id: scene,
     scene: resolved,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    auto_match: buildAutoMatch(resolved, style, overrides),
     color_plan: colorPlan,
     visual_grammar: VISUAL_GRAMMAR,
     prompt_zh,
@@ -277,13 +294,14 @@ export async function generateComposedPrompt({
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.5.0",
+    version: "0.6.1",
     source: "composed",
     scene,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    auto_match: buildAutoMatch(scene, style),
     color_plan: colorPlan,
     visual_grammar: VISUAL_GRAMMAR,
     prompt_zh,
