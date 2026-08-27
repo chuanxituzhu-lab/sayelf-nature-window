@@ -62,14 +62,64 @@ const EMOTIONS = {
   solitude: { zh: "孤独与留白", en: "solitude and negative space" }
 };
 
+const AUTO_COMBINATIONS = [
+  { plant: "grass", location: "field", emotion: "freedom" },
+  { plant: "bamboo", location: "mountain", emotion: "calm" },
+  { plant: "lotus", location: "pond", emotion: "longing" },
+  { plant: "reeds", location: "wetland", emotion: "mystery" },
+  { plant: "maple", location: "garden", emotion: "renewal" },
+  { plant: "snow_branches", location: "mountain", emotion: "solitude" },
+  { plant: "fern", location: "forest", emotion: "mystery" }
+];
+
+const COMPOSITION_MODES = {
+  auto: { id: "auto", name_zh: "自动选择", name_en: "Automatic selection" },
+  random: { id: "random", name_zh: "随机组合", name_en: "Random combination" },
+  manual: { id: "manual", name_zh: "手动选择", name_en: "Manual selection" }
+};
+
+function hashSeed(value) {
+  let hash = 2166136261;
+  for (const char of String(value ?? "")) {
+    hash ^= char.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
+
+function pick(values, seed, salt) {
+  return values[hashSeed(`${seed}:${salt}`) % values.length];
+}
+
 function norm(value, fallback) {
   return typeof value === "string" && value.trim() ? value.trim() : fallback;
 }
 
 export function composeScene(input = {}) {
-  const plantKey = norm(input.plant, "grass");
-  const locationKey = norm(input.location, "field");
-  const emotionKey = norm(input.emotion, "calm");
+  const hasManualSelection = [input.plant, input.location, input.emotion].some(value => norm(value, ""));
+  const requestedMode = norm(input.mode, hasManualSelection ? "manual" : "auto");
+  const mode = COMPOSITION_MODES[requestedMode] ? requestedMode : "manual";
+  const seed = input.seed ?? Date.now();
+  let selection;
+  if (mode === "auto") {
+    selection = pick(AUTO_COMBINATIONS, seed, "auto-combination");
+  } else if (mode === "random") {
+    selection = {
+      plant: pick(Object.keys(PLANTS), seed, "random-plant"),
+      location: pick(Object.keys(LOCATIONS), seed, "random-location"),
+      emotion: pick(Object.keys(EMOTIONS), seed, "random-emotion")
+    };
+  } else {
+    selection = {
+      plant: norm(input.plant, "grass"),
+      location: norm(input.location, "field"),
+      emotion: norm(input.emotion, "calm")
+    };
+  }
+
+  const plantKey = selection.plant;
+  const locationKey = selection.location;
+  const emotionKey = selection.emotion;
 
   const plant = PLANTS[plantKey] || PLANTS.grass;
   const location = LOCATIONS[locationKey] || LOCATIONS.field;
@@ -86,6 +136,8 @@ export function composeScene(input = {}) {
   return {
     name_zh: nameZh,
     name_en: nameEn,
+    composition_mode: COMPOSITION_MODES[mode],
+    composition_selection: { plant: plantKey, location: locationKey, emotion: emotionKey },
     plant_zh: plant.zh,
     plant_en: plant.en,
     entry_zh: `镜头真正进入${location.zh}的自然内部，贴近地面或植株根部，从植物结构之间向远处或上方寻找出口`,

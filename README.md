@@ -9,7 +9,7 @@
 
 ## 当前版本 / Current Release
 
-**v0.11.0 — 可选画面比例 / Selectable Aspect Ratios**
+**v0.12.0 — 动态场景组合模式 / Dynamic Scene Composition Modes**
 
 本版本在保持 `Enter → Enclose → Guide → Reveal` 核心机制与既有架构不变的基础上，新增：
 
@@ -18,6 +18,7 @@
 - **高级用户可选择自定义**：在高级设置中切换到“高级用户自定义”，可填写任意需要改变的项目；未填写的项目仍自动匹配。
 - **提示词驱动视觉模拟预览**：点击生成、随机生成或组合生成后，Prompt 右侧根据场景、天空情绪、视觉风格、色彩策略和随机种子绘制竖屏模拟图；每次生成自动变化，用于理解构图与色彩，不冒充最终照片。
 - **画面比例可选**：普通用户可直接选择 `1:1`、`4:5`、`3:4`、`9:16` 或 `16:9`；所选比例会同步写入提示词、API/MCP/CLI 输出和视觉模拟预览。
+- **动态场景组合模式**：提供“自动选择”“随机组合”和“手动选择”；自动选择使用协调的植物–地点–情绪组合，随机组合独立抽取三项，手动选择保留高级用户的精确控制。
 - **完整 WebUI 美化**：以自然观察台为设计方向，重做页面层级、控件、按钮、卡片、预览区与移动端布局，让生成流程更清晰、更有视觉重点。
 - **复制成功反馈**：点击“复制”后显示明确的“复制成功”；没有内容或浏览器拒绝复制时，也会给出清晰提示。
 - **透明结果说明**：生成结果返回结构化 `auto_match`，明确显示匹配到的内容；需要时仍可展开高级设置手动覆盖。
@@ -25,7 +26,7 @@
 - **智能色彩策略**：根据场景色彩家族自动计算饱和度、色相和明亮度，并写入结构化 `color_plan`。
 - **版本化更新**：仓库原地持续更新；每次功能更新递增 SemVer 版本号，并同步运行时版本与 Git 标签。后续请以版本号和本节更新摘要为准。
 
-This release adds selectable aspect ratios — 1:1, 4:5, 3:4, 9:16, and 16:9 — and carries the choice through prompts, API/MCP/CLI output, and the prompt-driven visual simulation preview. The preview keeps changing with the selected scene, upward sky mood, visual style, color plan, ratio, and seed while preserving the vertical insect-scale discovery language, frozen core, automatic matching, and copy feedback. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
+This release adds three dynamic scene-composition modes: automatic selection chooses a coordinated plant–location–emotion set, random combination independently samples the three dimensions, and manual selection preserves precise control for advanced users. All modes remain seed-reproducible and carry the result through prompts, the visual simulation preview, and the existing API/MCP/CLI interfaces. Selectable aspect ratios, upward insect-scale discovery, automatic matching, the frozen core, and copy feedback remain intact. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
 
 ![Nature Window core overview](assets/nature-window-overview.png)
 
@@ -95,7 +96,7 @@ The same lotus pond, bamboo forest, or winter branch scene can generate many con
 
 ### 价值 3：从 Prompt 模板升级为生成机制 / From Template to Generator
 
-场景不是写死的。Scene Composer 可以根据植物、地点、情绪、窗口和视觉钩子动态构造新的 `SceneSpec`。
+场景不是写死的。Scene Composer 可以根据植物、地点、情绪、窗口和视觉钩子动态构造新的 `SceneSpec`，并支持自动选择、随机组合和手动选择三种组合模式。
 
 Scenes are not hard-coded. Scene Composer can dynamically construct new `SceneSpec` objects from plants, locations, emotions, windows, and visual hooks.
 
@@ -269,7 +270,7 @@ node interfaces/cli/index.mjs compose \
 
 Composer 只负责构造 `SceneSpec`，最终仍必须经过被冻结的 Core。
 
-The Composer only builds a `SceneSpec`; every result must still pass through the frozen Core.
+The Composer only builds a `SceneSpec`; automatic selection, random combination, and manual selection all pass through the frozen Core.
 
 ---
 
@@ -311,6 +312,10 @@ node interfaces/cli/index.mjs series \
 
 node interfaces/cli/index.mjs one-click \
   --lang en
+
+node interfaces/cli/index.mjs compose \
+  --mode random \
+  --ratio 9:16
 ```
 
 ### HTTP API

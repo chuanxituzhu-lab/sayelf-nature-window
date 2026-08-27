@@ -3,7 +3,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { generatePrompt, listScenes, oneClick, series, generateComposedPrompt } from "../../core/compiler.mjs";
 
-const server = new McpServer({ name: "hidden-nature-window", version: "0.11.0" });
+const server = new McpServer({ name: "hidden-nature-window", version: "0.12.0" });
 
 server.tool("hidden_window_list_scenes", "List available natural-scene presets.", {}, async () => ({
   content: [{ type: "text", text: JSON.stringify(listScenes(), null, 2) }]
@@ -55,15 +55,16 @@ server.tool(
     plant: z.enum(["bamboo","lotus","reeds","maple","snow_branches","grass","fern"]).default("grass"),
     location: z.enum(["forest","pond","mountain","wetland","garden","coast","field"]).default("field"),
     emotion: z.enum(["calm","longing","mystery","freedom","renewal","solitude"]).default("calm"),
+    mode: z.enum(["auto", "random", "manual"]).default("manual"),
     window: z.string().optional(),
     hook: z.string().optional(),
     language: z.enum(["zh","en","bilingual"]).default("zh"),
     aspect_ratio: z.enum(["1:1", "4:5", "3:4", "9:16", "16:9"]).default("9:16"),
     seed: z.number().int().optional()
   },
-  async ({ plant, location, emotion, window, hook, language, aspect_ratio, seed }) => {
+  async ({ plant, location, emotion, mode, window, hook, language, aspect_ratio, seed }) => {
     const out = await generateComposedPrompt({
-      input: { plant, location, emotion, window, hook },
+      input: { plant, location, emotion, mode, window, hook },
       language,
       seed: seed ?? Date.now(),
       aspectRatio: aspect_ratio

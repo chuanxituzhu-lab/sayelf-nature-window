@@ -258,7 +258,7 @@ export function generatePrompt({ scene, language = "zh", overrides = {}, seed = 
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.11.0",
+    version: "0.12.0",
     scene_id: scene,
     scene: resolved,
     seed,
@@ -304,7 +304,7 @@ export async function generateComposedPrompt({
   if (!LANGUAGES.includes(language)) {
     throw new Error(`Unsupported language: ${language}`);
   }
-  const scene = await composeSceneSpec(input);
+  const scene = await composeSceneSpec({ ...input, seed });
   const variation = buildVariation(seed);
   const style = resolveVisualStyle(visualStyle);
   const ratio = resolveAspectRatio(aspectRatio);
@@ -314,7 +314,7 @@ export async function generateComposedPrompt({
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.11.0",
+    version: "0.12.0",
     source: "composed",
     scene,
     seed,
@@ -323,6 +323,8 @@ export async function generateComposedPrompt({
     visual_style_name: { zh: style.name_zh, en: style.name_en },
     aspect_ratio: ratio.id,
     aspect_ratio_name: { zh: ratio.name_zh, en: ratio.name_en },
+    composition_mode: scene.composition_mode,
+    composition_selection: scene.composition_selection,
     upward_motif: variation.upward_sky,
     auto_match: buildAutoMatch(scene, style),
     color_plan: colorPlan,

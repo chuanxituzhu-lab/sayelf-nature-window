@@ -35,6 +35,7 @@ try {
       seed,
       aspectRatio,
       input: {
+        mode: arg("mode", "manual"),
         plant: arg("plant", "grass"),
         location: arg("location", "field"),
         emotion: arg("emotion", "calm"),
@@ -57,13 +58,13 @@ try {
       prompt: x.prompt
     })), null, 2));
   } else {
-    console.log(`Hidden Nature Window Skill v0.11.0
+    console.log(`Hidden Nature Window Skill v0.12.0
 
 Commands:
   scenes
   generate --scene <id> [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
   one-click [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
-  compose [--plant grass] [--location field] [--emotion calm] [--window "..."] [--hook "..."] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
+  compose [--mode auto|random|manual] [--plant grass] [--location field] [--emotion calm] [--window "..."] [--hook "..."] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
   series --scene <id> [--count 6] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
 `);
   }

@@ -162,6 +162,31 @@ test("dynamic composer creates a valid scene without touching core grammar", asy
   assert.ok(scene.hook_zh);
 });
 
+test("dynamic composer supports automatic, random and manual selection modes", async () => {
+  const autoA = await composeSceneSpec({ mode: "auto", seed: 12 });
+  const autoB = await composeSceneSpec({ mode: "auto", seed: 12 });
+  assert.equal(autoA.composition_mode.id, "auto");
+  assert.deepEqual(autoA.composition_selection, autoB.composition_selection);
+
+  const randomSelections = new Set();
+  for (let seed = 1; seed <= 8; seed++) {
+    const random = await composeSceneSpec({ mode: "random", seed });
+    assert.equal(random.composition_mode.id, "random");
+    randomSelections.add(JSON.stringify(random.composition_selection));
+  }
+  assert.ok(randomSelections.size > 1);
+
+  const manual = await composeSceneSpec({
+    mode: "manual",
+    plant: "fern",
+    location: "forest",
+    emotion: "mystery",
+    seed: 12
+  });
+  assert.equal(manual.composition_mode.id, "manual");
+  assert.deepEqual(manual.composition_selection, { plant: "fern", location: "forest", emotion: "mystery" });
+});
+
 test("composed prompt preserves frozen core grammar", async () => {
   const out = await generateComposedPrompt({
     input: {

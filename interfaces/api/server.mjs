@@ -50,7 +50,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && req.url === "/v1/compose") {
       const body = await readJson(req);
       return send(res, 200, await generateComposedPrompt({
-        input: body.input || {},
+        input: { ...(body.input || {}), mode: body.mode || body.input?.mode },
         language: body.language || "zh",
         seed: Number.isInteger(body.seed) ? body.seed : Date.now(),
         visualStyle: body.visual_style || body.visualStyle || "natural",

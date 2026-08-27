@@ -4,6 +4,10 @@ const visualStyleEl = document.querySelector("#visualStyle");
 const aspectRatioEl = document.querySelector("#aspectRatio");
 const matchModeEl = document.querySelector("#matchMode");
 const manualFieldsEl = document.querySelector("#manualFields");
+const composeModeEl = document.querySelector("#composeMode");
+const plantEl = document.querySelector("#plant");
+const locationEl = document.querySelector("#location");
+const composerEmotionEl = document.querySelector("#composerEmotion");
 const outputEl = document.querySelector("#output");
 const metaEl = document.querySelector("#meta");
 const previewEl = document.querySelector("#preview");
@@ -249,6 +253,21 @@ function updateMatchMode() {
   manualFieldsEl.hidden = matchModeEl.value !== "manual";
 }
 
+function updateComposerMode() {
+  const manual = composeModeEl.value === "manual";
+  [plantEl, locationEl, composerEmotionEl].forEach(element => {
+    element.disabled = !manual;
+  });
+}
+
+function syncCompositionSelection(data) {
+  const selection = data.composition_selection || data.scene?.composition_selection;
+  if (!selection) return;
+  if (selection.plant) plantEl.value = selection.plant;
+  if (selection.location) locationEl.value = selection.location;
+  if (selection.emotion) composerEmotionEl.value = selection.emotion;
+}
+
 function updateMeta(data, prefix) {
   const match = data.auto_match;
   if (!match) {
@@ -263,7 +282,9 @@ function updateMeta(data, prefix) {
     : "";
   const upwardLine = upward ? `\n向上视角：${upward}` : "";
   const ratioLine = `\n画面比例：${data.aspect_ratio || "9:16"}`;
-  metaEl.textContent = `${prefix} · ${match.mode_zh}${ratioLine}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}${upwardLine}`;
+  const composition = data.composition_mode || data.scene?.composition_mode;
+  const compositionLine = composition ? `\n组合方式：${composition.name_zh}` : "";
+  metaEl.textContent = `${prefix} · ${match.mode_zh}${ratioLine}${compositionLine}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}${upwardLine}`;
 }
 
 async function json(url, options) {
@@ -328,6 +349,8 @@ document.querySelector("#clear").onclick = () => { outputEl.value = ""; metaEl.t
 
 matchModeEl.onchange = updateMatchMode;
 updateMatchMode();
+composeModeEl.onchange = updateComposerMode;
+updateComposerMode();
 
 loadScenes().catch(error => {
   metaEl.textContent = `场景加载失败：${error.message}`;
@@ -340,9 +363,10 @@ async function composeScenePrompt() {
     visual_style: visualStyleEl.value,
     aspect_ratio: aspectRatioEl.value,
     input: {
-      plant: document.querySelector("#plant").value,
-      location: document.querySelector("#location").value,
-      emotion: document.querySelector("#composerEmotion").value
+      mode: composeModeEl.value,
+      plant: plantEl.value,
+      location: locationEl.value,
+      emotion: composerEmotionEl.value
     }
   };
   const data = await json("/v1/compose", {
@@ -351,6 +375,7 @@ async function composeScenePrompt() {
     body: JSON.stringify(body)
   });
   outputEl.value = data.prompt;
+  syncCompositionSelection(data);
   updatePreview(data);
   updateMeta(data, `动态组合 · ${data.scene.name_zh} / ${data.scene.name_en}`);
 }
@@ -361,9 +386,10 @@ async function composeSeriesPrompt() {
     visual_style: visualStyleEl.value,
     aspect_ratio: aspectRatioEl.value,
     input: {
-      plant: document.querySelector("#plant").value,
-      location: document.querySelector("#location").value,
-      emotion: document.querySelector("#composerEmotion").value
+      mode: composeModeEl.value,
+      plant: plantEl.value,
+      location: locationEl.value,
+      emotion: composerEmotionEl.value
     }
   };
   const items = [];
@@ -379,8 +405,9 @@ async function composeSeriesPrompt() {
     items.push(`### ${i+1}\n${data.prompt}`);
   }
   outputEl.value = items.join("\n\n");
+  syncCompositionSelection(lastData);
   updatePreview(lastData);
-  metaEl.textContent = "动态组合系列 · 6条";
+  updateMeta(lastData, "动态组合系列 · 6条");
 }
 
 document.querySelector("#compose").onclick = () => composeScenePrompt().catch(e => alert(e.message));

@@ -54,6 +54,7 @@
     label { display:block; margin-bottom:7px; color:#d7e3d4; font-size:12px; font-weight:700; letter-spacing:.02em; }
     select,input,textarea,button { width:100%; border-radius:12px; border:1px solid var(--line-strong); padding:12px 13px; font:inherit; }
     select,input,textarea { background:rgba(6,16,12,.72); color:var(--text); outline:none; transition:border-color .18s, background .18s, box-shadow .18s; }
+    select:disabled { cursor:not-allowed; opacity:.58; }
     select:hover,input:hover,textarea:hover { background:rgba(7,19,14,.92); border-color:rgba(157,204,134,.46); }
     select:focus,input:focus,textarea:focus { border-color:var(--moss); box-shadow:0 0 0 3px rgba(157,204,134,.13); }
     select option { background:#102119; color:var(--text); }
@@ -185,18 +186,23 @@
         <p class="kicker">02 / Compose</p>
         <h3>动态场景组合<span>Scene Composer</span></h3>
       </div>
-      <p class="panel-note">把植物、地点和情绪组合成新的自然场景。</p>
+      <p class="panel-note">可以自动选择、随机组合，也可以由高级用户手动指定。</p>
     </div>
     <div class="grid">
-      <div><label>植物</label><select id="plant">
+      <div><label for="composeMode">组合方式 / Compose Mode</label><select id="composeMode">
+        <option value="auto" selected>自动选择（推荐） / Automatic</option>
+        <option value="random">随机组合 / Random</option>
+        <option value="manual">手动选择 / Manual</option>
+      </select></div>
+      <div><label for="plant">植物</label><select id="plant" disabled>
         <option value="grass">草丛</option><option value="bamboo">竹</option><option value="lotus">荷</option>
         <option value="reeds">芦苇</option><option value="maple">枫</option><option value="snow_branches">雪枝</option><option value="fern">蕨</option>
       </select></div>
-      <div><label>地点</label><select id="location">
+      <div><label for="location">地点</label><select id="location" disabled>
         <option value="field">田野</option><option value="forest">森林</option><option value="pond">池塘</option>
         <option value="mountain">山地</option><option value="wetland">湿地</option><option value="garden">庭园</option><option value="coast">海岸</option>
       </select></div>
-      <div><label>情绪</label><select id="composerEmotion">
+      <div><label for="composerEmotion">情绪</label><select id="composerEmotion" disabled>
         <option value="calm">安静</option><option value="longing">思念</option><option value="mystery">神秘</option>
         <option value="freedom">自由</option><option value="renewal">新生</option><option value="solitude">孤独</option>
       </select></div>
