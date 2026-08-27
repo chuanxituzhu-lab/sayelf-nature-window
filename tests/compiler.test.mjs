@@ -25,6 +25,20 @@ test("English prompt compiles", () => {
   assert.match(out.prompt, /Single visual hook/);
 });
 
+test("upward sky motif adds insect-scale vertical discovery without changing the core", () => {
+  const zh = generatePrompt({ scene: "lotus_pond", language: "zh", seed: 23 });
+  assert.ok(zh.variation.upward_sky);
+  assert.ok(zh.upward_motif);
+  assert.match(zh.prompt, /【向上】/);
+  assert.match(zh.prompt, /小昆虫|蓝天|朝霞|晚霞|雨后/);
+  assert.match(zh.prompt, /管中窥豹|向上|光亮/);
+  assert.deepEqual(zh.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
+
+  const en = generatePrompt({ scene: "lotus_pond", language: "en", seed: 23 });
+  assert.match(en.prompt, /\[LOOK UP\]/);
+  assert.match(en.prompt, /insect-scale|dawn|sunset|sky/i);
+});
+
 test("visual impact profiles strengthen treatment without changing the core grammar", () => {
   const out = generatePrompt({ scene: "lotus_pond", language: "zh", visualStyle: "impact", seed: 19 });
   assert.equal(out.visual_style, "impact");

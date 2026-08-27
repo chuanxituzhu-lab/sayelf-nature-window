@@ -52,7 +52,7 @@ try {
       prompt: x.prompt
     })), null, 2));
   } else {
-    console.log(`Hidden Nature Window Skill v0.6.1
+    console.log(`Hidden Nature Window Skill v0.10.0
 
 Commands:
   scenes

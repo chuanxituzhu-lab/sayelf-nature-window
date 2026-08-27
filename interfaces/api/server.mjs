@@ -6,12 +6,13 @@ import { generatePrompt, listScenes, oneClick, series, generateComposedPrompt } 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(__dirname, "../web");
+const assetsRoot = path.resolve(__dirname, "../../assets");
 const port = Number(process.env.PORT || 4178);
 const host = process.env.HOST || "127.0.0.1";
 
 function send(res, status, body, type = "application/json; charset=utf-8") {
   res.writeHead(status, { "content-type": type, "access-control-allow-origin": "*" });
-  res.end(typeof body === "string" ? body : JSON.stringify(body, null, 2));
+  res.end(typeof body === "string" || Buffer.isBuffer(body) ? body : JSON.stringify(body, null, 2));
 }
 
 async function readJson(req) {
@@ -73,6 +74,10 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && req.url === "/app.js") {
       const js = fs.readFileSync(path.join(webRoot, "app.js"), "utf8");
       return send(res, 200, js, "text/javascript; charset=utf-8");
+    }
+    if (req.method === "GET" && req.url === "/assets/nature-window-preview.png") {
+      const image = fs.readFileSync(path.join(assetsRoot, "nature-window-preview.png"));
+      return send(res, 200, image, "image/png");
     }
     return send(res, 404, { error: "not_found" });
   } catch (error) {

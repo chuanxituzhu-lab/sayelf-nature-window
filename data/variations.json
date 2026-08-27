@@ -196,5 +196,35 @@
       "zh": "视觉钩子位于中景，远景只保留出口",
       "en": "the visual hook stays in the midground while the far layer contains only the exit"
     }
+  ],
+  "upward_sky": [
+    {
+      "id": "healing_blue",
+      "name_zh": "治愈蓝天",
+      "name_en": "Healing blue sky",
+      "zh": "视线从小昆虫般的贴地高度沿植物缝隙垂直向上，只窥见一小片治愈的清澈蓝天；不出现昆虫本体，以巨大叶片和狭窄出口形成管中窥豹的发现感，寓意从低处出发、在遮挡中坚持寻找光亮并持续向上生长",
+      "en": "from a tiny insect-scale ground-level viewpoint, look vertically upward through a narrow plant gap and glimpse a small piece of healing clear blue sky; show no insect body, using oversized leaves and a narrow exit for a peeking-through-a-tube discovery, symbolizing starting low, persisting through obstacles and continuing to grow toward light"
+    },
+    {
+      "id": "dawn_rise",
+      "name_zh": "朝霞初升",
+      "name_en": "Rising dawn",
+      "zh": "镜头贴近根部并垂直向上，沿茎叶组成的天然管道窥见一线粉金朝霞；不出现昆虫本体，微小视角与高处天光形成强烈尺度反差，寓意在黑暗和阻力中迎向新一天",
+      "en": "keep the camera close to the roots and aim vertically upward through a natural stem-and-leaf tube to glimpse a line of pink-gold dawn; show no insect body, using tiny scale against high sky light to symbolize meeting a new day through darkness and resistance"
+    },
+    {
+      "id": "sunset_glow",
+      "name_zh": "晚霞向光",
+      "name_en": "Sunset glow",
+      "zh": "从低处向上穿过密集植物的狭缝，窥见一小块橙红晚霞；不出现昆虫本体，让前景遮挡像人生阻力，唯一的暖色天空成为坚持向上的光",
+      "en": "look upward from low inside a dense plant slit and glimpse a small patch of orange-red sunset; show no insect body, letting foreground occlusion stand for life's resistance while the single warm sky opening becomes the light of upward perseverance"
+    },
+    {
+      "id": "after_rain_sky",
+      "name_zh": "雨后天光",
+      "name_en": "Post-rain sky",
+      "zh": "以贴地的小昆虫尺度从湿润叶片下方垂直向上，穿过水珠和枝叶窥见雨后明亮蓝天；不出现昆虫本体，形成先窄后开的管中窥豹路径，寓意经历阻力后仍向上寻找清明",
+      "en": "from a tiny insect-scale viewpoint beneath wet leaves, look vertically upward through droplets and branches toward bright blue post-rain sky; show no insect body, creating a narrow-then-opening peeking path that symbolizes seeking clarity upward after resistance"
+    }
   ]
 }

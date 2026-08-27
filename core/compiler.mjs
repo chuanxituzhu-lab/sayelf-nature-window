@@ -175,7 +175,8 @@ export function buildVariation(seed = Date.now()) {
     seasonal_trace: pick(v.seasonal_trace, seed, "season"),
     foreground_occlusion: pick(v.foreground_occlusion, seed, "foreground"),
     depth_rhythm: pick(v.depth_rhythm, seed, "depth"),
-    hook_state: pick(v.hook_state, seed, "hookstate")
+    hook_state: pick(v.hook_state, seed, "hookstate"),
+    upward_sky: pick(v.upward_sky, seed, "upward-sky")
   };
 }
 
@@ -183,6 +184,7 @@ function zhPrompt(scene, variation, style, colorPlan) {
   return [
     `真实自然摄影，9:16竖屏。场景：${scene.name_zh}。`,
     `【进入】${scene.entry_zh}；本次机位变化：${variation.camera_micro.zh}。`,
+    `【向上】${variation.upward_sky.zh}。`,
     `【包围】${scene.enclosure_zh}，让植物和自然元素占据画面大多数区域，并允许近镜叶片、枝条或花朵产生真实遮挡与自然失焦。`,
     `空间至少三层：贴近镜头的遮挡层 → 可辨识的中景环境层 → 远处的发现层。`,
     `【引导】利用茎秆、枝条、叶片方向、尺寸递减与明暗变化，将视线从画面边缘自然引向隐藏窗口。`,
@@ -198,7 +200,7 @@ function zhPrompt(scene, variation, style, colorPlan) {
     `智能色彩调整：饱和度——${colorPlan.saturation.zh}；色相——${colorPlan.hue.zh}；明亮度——${colorPlan.brightness.zh}。`,
     `视觉表现（${style.name_zh}）：${style.zh}。`,
     `情绪：${scene.emotion_zh}。`,
-    `核心机制固定不变：进入 → 包围 → 引导 → 显露。变化只发生在时间、天气、机位微差、窗口形态、前景遮挡、空间节奏、季节痕迹、视觉钩子状态和决定性瞬间。`,
+    `核心机制固定不变：进入 → 包围 → 引导 → 显露。变化只发生在时间、天气、机位微差、向上视角与天空情绪、窗口形态、前景遮挡、空间节奏、季节痕迹、视觉钩子状态和决定性瞬间。`,
     `保持真实植物纹理、随机生长、自然缺损、可信相机位置与真实物理景深。`
   ].join("\n");
 }
@@ -207,6 +209,7 @@ function enPrompt(scene, variation, style, colorPlan) {
   return [
     `Photorealistic nature photography, vertical 9:16. Scene: ${scene.name_en}.`,
     `[ENTER] ${scene.entry_en}; this variation uses: ${variation.camera_micro.en}.`,
+    `[LOOK UP] ${variation.upward_sky.en}.`,
     `[ENCLOSE] ${scene.enclosure_en}. Natural elements occupy most of the frame with believable foreground occlusion and optical focus falloff.`,
     `Keep at least three physical depth layers: near occlusion → recognizable midground environment → distant discovery layer.`,
     `[GUIDE] Use stems, branches, leaf direction, diminishing scale and natural luminance gradients to guide the eye toward the hidden window.`,
@@ -222,7 +225,7 @@ function enPrompt(scene, variation, style, colorPlan) {
     `Smart color adjustment: saturation — ${colorPlan.saturation.en}; hue — ${colorPlan.hue.en}; brightness — ${colorPlan.brightness.en}.`,
     `Visual treatment (${style.name_en}): ${style.en}.`,
     `Emotion: ${scene.emotion_en}.`,
-    `The core mechanism is frozen: Enter → Enclose → Guide → Reveal. Variation is allowed only in time, weather, camera micro-position, window shape, foreground occlusion, depth rhythm, seasonal trace, hook state and decisive moment.`,
+    `The core mechanism is frozen: Enter → Enclose → Guide → Reveal. Variation is allowed only in time, weather, camera micro-position, upward gaze and sky mood, window shape, foreground occlusion, depth rhythm, seasonal trace, hook state and decisive moment.`,
     `Keep authentic plant texture, random growth, natural imperfections, believable camera placement and real optical depth.`
   ].join("\n");
 }
@@ -243,13 +246,14 @@ export function generatePrompt({ scene, language = "zh", overrides = {}, seed = 
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.6.1",
+    version: "0.10.0",
     scene_id: scene,
     scene: resolved,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    upward_motif: variation.upward_sky,
     auto_match: buildAutoMatch(resolved, style, overrides),
     color_plan: colorPlan,
     visual_grammar: VISUAL_GRAMMAR,
@@ -294,13 +298,14 @@ export async function generateComposedPrompt({
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.6.1",
+    version: "0.10.0",
     source: "composed",
     scene,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    upward_motif: variation.upward_sky,
     auto_match: buildAutoMatch(scene, style),
     color_plan: colorPlan,
     visual_grammar: VISUAL_GRAMMAR,
