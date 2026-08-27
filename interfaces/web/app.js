@@ -1,11 +1,13 @@
 const sceneEl = document.querySelector("#scene");
 const langEl = document.querySelector("#language");
 const visualStyleEl = document.querySelector("#visualStyle");
+const aspectRatioEl = document.querySelector("#aspectRatio");
 const matchModeEl = document.querySelector("#matchMode");
 const manualFieldsEl = document.querySelector("#manualFields");
 const outputEl = document.querySelector("#output");
 const metaEl = document.querySelector("#meta");
 const previewEl = document.querySelector("#preview");
+const previewFrameEl = document.querySelector(".preview-frame");
 const previewEmptyEl = document.querySelector("#previewEmpty");
 const previewCaptionEl = document.querySelector("#previewCaption");
 const copyStatusEl = document.querySelector("#copyStatus");
@@ -26,6 +28,13 @@ function seededRandom(seed) {
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
     return state / 4294967296;
   };
+}
+
+function parsePreviewRatio(value = "9:16") {
+  const [width, height] = String(value).split(":").map(Number);
+  return Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0
+    ? [width, height]
+    : [9, 16];
 }
 
 function escapeXml(value) {
@@ -73,14 +82,16 @@ function createPreviewSvg(data) {
   const random = seededRandom(`${data.seed}:${data.scene_id}:${data.upward_motif?.id}:${data.visual_style}`);
   const palette = previewPalette(data);
   const width = 720;
-  const height = 1120;
+  const [ratioWidth, ratioHeight] = parsePreviewRatio(data.aspect_ratio);
+  const height = Math.max(360, Math.round(width * ratioHeight / ratioWidth));
+  const scaleY = value => value * height / 1120;
   const center = width / 2 + (random() - .5) * 42;
-  const apertureTop = 285 + random() * 105;
-  const apertureBottom = 790 + random() * 110;
-  const apertureWidth = 150 + random() * 60;
+  const apertureTop = scaleY(285 + random() * 105);
+  const apertureBottom = scaleY(790 + random() * 110);
+  const apertureWidth = (150 + random() * 60) * Math.min(1.15, Math.max(.72, Math.sqrt(height / 1120)));
   const left = center - apertureWidth;
   const right = center + apertureWidth;
-  const aperturePath = `M ${center.toFixed(1)} ${apertureTop.toFixed(1)} C ${(right + 44).toFixed(1)} ${(apertureTop + 120).toFixed(1)}, ${(right + 22).toFixed(1)} ${(apertureBottom - 110).toFixed(1)}, ${right.toFixed(1)} ${apertureBottom.toFixed(1)} C ${(center + 70).toFixed(1)} ${(apertureBottom + 52).toFixed(1)}, ${(center - 80).toFixed(1)} ${(apertureBottom + 42).toFixed(1)}, ${left.toFixed(1)} ${apertureBottom.toFixed(1)} C ${(left - 28).toFixed(1)} ${(apertureBottom - 120).toFixed(1)}, ${(left - 38).toFixed(1)} ${(apertureTop + 90).toFixed(1)}, ${center.toFixed(1)} ${apertureTop.toFixed(1)}Z`;
+  const aperturePath = `M ${center.toFixed(1)} ${apertureTop.toFixed(1)} C ${(right + 44).toFixed(1)} ${(apertureTop + scaleY(120)).toFixed(1)}, ${(right + 22).toFixed(1)} ${(apertureBottom - scaleY(110)).toFixed(1)}, ${right.toFixed(1)} ${apertureBottom.toFixed(1)} C ${(center + 70).toFixed(1)} ${(apertureBottom + scaleY(52)).toFixed(1)}, ${(center - 80).toFixed(1)} ${(apertureBottom + scaleY(42)).toFixed(1)}, ${left.toFixed(1)} ${apertureBottom.toFixed(1)} C ${(left - 28).toFixed(1)} ${(apertureBottom - scaleY(120)).toFixed(1)}, ${(left - 38).toFixed(1)} ${(apertureTop + scaleY(90)).toFixed(1)}, ${center.toFixed(1)} ${apertureTop.toFixed(1)}Z`;
 
   const skyDetails = Array.from({ length: 7 }, () => {
     const x = left + random() * apertureWidth * 2;
@@ -93,7 +104,7 @@ function createPreviewSvg(data) {
     const side = index % 2 === 0 ? -1 : 1;
     const x = center + side * (apertureWidth * (.7 + random() * .9));
     const bend = center + side * (apertureWidth * (.35 + random() * .7));
-    return `<path d="M ${x.toFixed(1)} 1120 Q ${bend.toFixed(1)} ${(780 - random() * 230).toFixed(1)} ${(center + side * random() * 80).toFixed(1)} ${(apertureTop + random() * 180).toFixed(1)}" fill="none" stroke="${palette.mid}" stroke-width="${(4 + random() * 7).toFixed(1)}" opacity=".72"/>`;
+    return `<path d="M ${x.toFixed(1)} ${height.toFixed(1)} Q ${bend.toFixed(1)} ${scaleY(780 - random() * 230).toFixed(1)} ${(center + side * random() * 80).toFixed(1)} ${(apertureTop + random() * scaleY(180)).toFixed(1)}" fill="none" stroke="${palette.mid}" stroke-width="${(4 + random() * 7).toFixed(1)}" opacity=".72"/>`;
   }).join("");
 
   const leaves = [];
@@ -104,19 +115,19 @@ function createPreviewSvg(data) {
     let angle;
     if (edge === 0) {
       x = random() * width;
-      y = -50 + random() * 260;
+      y = scaleY(-50 + random() * 260);
       angle = 125 + random() * 85;
     } else if (edge === 1) {
       x = random() * 190 - 80;
-      y = 130 + random() * 890;
+      y = scaleY(130 + random() * 890);
       angle = -35 + random() * 90;
     } else if (edge === 2) {
       x = 530 + random() * 240;
-      y = 150 + random() * 920;
+      y = scaleY(150 + random() * 920);
       angle = 95 + random() * 95;
     } else {
       x = random() * width;
-      y = 850 + random() * 300;
+      y = scaleY(850 + random() * 300);
       angle = -115 + random() * 85;
     }
     const scale = .62 + random() * .78;
@@ -127,7 +138,7 @@ function createPreviewSvg(data) {
   const tubeLeaves = Array.from({ length: 18 }, (_, index) => {
     const side = index % 2 === 0 ? -1 : 1;
     const x = center + side * (apertureWidth * (.72 + random() * .35));
-    const y = apertureTop + 70 + random() * (apertureBottom - apertureTop - 130);
+    const y = apertureTop + scaleY(70) + random() * (apertureBottom - apertureTop - scaleY(130));
     return leafSvg(x, y, .32 + random() * .34, side < 0 ? 5 + random() * 60 : 115 + random() * 60, index % 3 === 0 ? palette.mid : palette.leaf, .72, 0);
   }).join("");
 
@@ -135,7 +146,7 @@ function createPreviewSvg(data) {
     const side = index % 2 === 0 ? -1 : 1;
     return flowerSvg(
       center + side * (apertureWidth + 80 + random() * 180),
-      430 + random() * 600,
+      scaleY(430 + random() * 600),
       .45 + random() * .58,
       index % 3 === 0 ? palette.accent : palette.mid,
       random() * 80 - 40
@@ -143,10 +154,13 @@ function createPreviewSvg(data) {
   }).join("");
 
   const motifId = data.upward_motif?.id || "healing_blue";
-  const sunY = motifId === "sunset_glow" ? apertureBottom - 80 : motifId === "dawn_rise" ? apertureTop + 92 : apertureTop + (apertureBottom - apertureTop) * .34;
+  const sunY = motifId === "sunset_glow" ? apertureBottom - scaleY(80) : motifId === "dawn_rise" ? apertureTop + scaleY(92) : apertureTop + (apertureBottom - apertureTop) * .34;
+  const sunRadius = Math.min(150, Math.max(76, 145 * height / 1120));
   const motifName = escapeXml(data.upward_motif?.name_zh || "向上发现");
   const sceneName = escapeXml(data.scene?.name_zh || data.scene?.name_en || "Nature Window");
   const styleLabel = escapeXml(data.visual_style || "natural");
+  const labelY = Math.max(50, height - 45);
+  const subLabelY = Math.max(70, height - 18);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${sceneName} ${motifName} visual simulation">
   <defs>
@@ -174,7 +188,7 @@ function createPreviewSvg(data) {
   </defs>
   <rect width="${width}" height="${height}" fill="url(#forest)"/>
   <path d="${aperturePath}" fill="url(#sky)"/>
-  <ellipse cx="${(center + (random() - .5) * 70).toFixed(1)}" cy="${sunY.toFixed(1)}" rx="145" ry="145" fill="url(#sun)" filter="url(#softBlur)"/>
+  <ellipse cx="${(center + (random() - .5) * 70).toFixed(1)}" cy="${sunY.toFixed(1)}" rx="${sunRadius.toFixed(1)}" ry="${sunRadius.toFixed(1)}" fill="url(#sun)" filter="url(#softBlur)"/>
   ${skyDetails}
   ${stems}
   ${tubeLeaves}
@@ -183,8 +197,8 @@ function createPreviewSvg(data) {
   <path d="${aperturePath}" fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="3"/>
   <rect width="${width}" height="${height}" fill="url(#vignette)"/>
   <text x="30" y="46" fill="#ffffff" fill-opacity=".72" font-family="Arial, sans-serif" font-size="16" letter-spacing="3">NATURE WINDOW · SIMULATION</text>
-  <text x="30" y="1080" fill="#ffffff" fill-opacity=".88" font-family="Arial, sans-serif" font-size="22" font-weight="700">${motifName}</text>
-  <text x="30" y="1107" fill="#ffffff" fill-opacity=".58" font-family="Arial, sans-serif" font-size="13" letter-spacing="1.2">${sceneName} · ${styleLabel}</text>
+  <text x="30" y="${labelY.toFixed(1)}" fill="#ffffff" fill-opacity=".88" font-family="Arial, sans-serif" font-size="22" font-weight="700">${motifName}</text>
+  <text x="30" y="${subLabelY.toFixed(1)}" fill="#ffffff" fill-opacity=".58" font-family="Arial, sans-serif" font-size="13" letter-spacing="1.2">${sceneName} · ${styleLabel}</text>
 </svg>`;
 }
 
@@ -205,6 +219,8 @@ function showCopyStatus(message, isError = false) {
 
 function updatePreview(data) {
   const sceneName = data.scene?.name_zh || data.scene?.name_en || "Nature Window";
+  const [ratioWidth, ratioHeight] = parsePreviewRatio(data.aspect_ratio);
+  previewFrameEl.style.aspectRatio = `${ratioWidth} / ${ratioHeight}`;
   previewEl.src = previewDataUri(data);
   previewEl.alt = `${sceneName} Nature Window visual simulation`;
   previewEl.hidden = false;
@@ -213,10 +229,11 @@ function updatePreview(data) {
 }
 
 function resetPreview() {
+  previewFrameEl.style.aspectRatio = "9 / 16";
   previewEl.src = "/assets/nature-window-preview.png";
   previewEl.hidden = true;
   previewEmptyEl.hidden = false;
-  previewCaptionEl.textContent = "预览图展示 Nature Window 的观看方式；生成后会依据提示词自动绘制视觉模拟图。";
+  previewCaptionEl.textContent = "预览图展示 Nature Window 的观看方式；生成后会依据提示词与所选画面比例自动绘制视觉模拟图。";
 }
 
 function getManualOverrides() {
@@ -245,7 +262,8 @@ function updateMeta(data, prefix) {
     ? (langEl.value === "en" ? data.upward_motif.en : data.upward_motif.zh)
     : "";
   const upwardLine = upward ? `\n向上视角：${upward}` : "";
-  metaEl.textContent = `${prefix} · ${match.mode_zh}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}${upwardLine}`;
+  const ratioLine = `\n画面比例：${data.aspect_ratio || "9:16"}`;
+  metaEl.textContent = `${prefix} · ${match.mode_zh}${ratioLine}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}${upwardLine}`;
 }
 
 async function json(url, options) {
@@ -267,6 +285,7 @@ async function generate() {
     scene: sceneEl.value,
     language: langEl.value,
     visual_style: visualStyleEl.value,
+    aspect_ratio: aspectRatioEl.value,
     overrides: getManualOverrides()
   };
   const data = await json("/v1/prompt", {
@@ -283,7 +302,7 @@ async function oneClickPrompt() {
   const data = await json("/v1/one-click", {
     method: "POST",
     headers: {"content-type":"application/json"},
-    body: JSON.stringify({ language: langEl.value, visual_style: visualStyleEl.value })
+    body: JSON.stringify({ language: langEl.value, visual_style: visualStyleEl.value, aspect_ratio: aspectRatioEl.value })
   });
   sceneEl.value = data.scene_id;
   outputEl.value = data.prompt;
@@ -319,6 +338,7 @@ async function composeScenePrompt() {
   const body = {
     language: langEl.value,
     visual_style: visualStyleEl.value,
+    aspect_ratio: aspectRatioEl.value,
     input: {
       plant: document.querySelector("#plant").value,
       location: document.querySelector("#location").value,
@@ -339,6 +359,7 @@ async function composeSeriesPrompt() {
   const base = {
     language: langEl.value,
     visual_style: visualStyleEl.value,
+    aspect_ratio: aspectRatioEl.value,
     input: {
       plant: document.querySelector("#plant").value,
       location: document.querySelector("#location").value,

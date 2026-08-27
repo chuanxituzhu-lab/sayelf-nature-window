@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { generatePrompt, listScenes, oneClick, series, VISUAL_GRAMMAR, generateComposedPrompt, composeSceneSpec } from "../core/compiler.mjs";
+import { generatePrompt, listScenes, oneClick, series, VISUAL_GRAMMAR, ASPECT_RATIOS, generateComposedPrompt, composeSceneSpec } from "../core/compiler.mjs";
 
 test("scene catalog is non-empty", () => {
   assert.ok(listScenes().length >= 24);
@@ -37,6 +37,21 @@ test("upward sky motif adds insect-scale vertical discovery without changing the
   const en = generatePrompt({ scene: "lotus_pond", language: "en", seed: 23 });
   assert.match(en.prompt, /\[LOOK UP\]/);
   assert.match(en.prompt, /insect-scale|dawn|sunset|sky/i);
+});
+
+test("aspect ratio is selectable across prompts and falls back safely", () => {
+  assert.deepEqual(Object.keys(ASPECT_RATIOS), ["1:1", "4:5", "3:4", "9:16", "16:9"]);
+  const square = generatePrompt({ scene: "lotus_pond", language: "zh", aspectRatio: "1:1", seed: 24 });
+  assert.equal(square.aspect_ratio, "1:1");
+  assert.match(square.prompt, /1:1方形画幅/);
+  assert.deepEqual(square.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
+
+  const wide = generatePrompt({ scene: "lotus_pond", language: "en", aspectRatio: "16:9", seed: 24 });
+  assert.equal(wide.aspect_ratio, "16:9");
+  assert.match(wide.prompt, /widescreen 16:9 frame/);
+
+  const fallback = generatePrompt({ scene: "lotus_pond", language: "zh", aspectRatio: "2:3", seed: 24 });
+  assert.equal(fallback.aspect_ratio, "9:16");
 });
 
 test("visual impact profiles strengthen treatment without changing the core grammar", () => {

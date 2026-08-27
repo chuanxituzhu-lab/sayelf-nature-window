@@ -13,23 +13,27 @@ try {
   } else if (cmd === "generate") {
     const scene = arg("scene");
     const language = arg("lang", "zh");
+    const aspectRatio = arg("ratio", "9:16");
     const seedRaw = arg("seed");
     const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
-    const out = generatePrompt({ scene, language, seed });
+    const out = generatePrompt({ scene, language, seed, aspectRatio });
     console.log(process.argv.includes("--json") ? JSON.stringify(out, null, 2) : out.prompt);
   } else if (cmd === "one-click") {
     const language = arg("lang", "zh");
+    const aspectRatio = arg("ratio", "9:16");
     const seedRaw = arg("seed");
     const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
-    const out = oneClick({ language, seed });
+    const out = oneClick({ language, seed, aspectRatio });
     console.log(process.argv.includes("--json") ? JSON.stringify(out, null, 2) : out.prompt);
   } else if (cmd === "compose") {
     const language = arg("lang", "zh");
+    const aspectRatio = arg("ratio", "9:16");
     const seedRaw = arg("seed");
     const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
     const out = await generateComposedPrompt({
       language,
       seed,
+      aspectRatio,
       input: {
         plant: arg("plant", "grass"),
         location: arg("location", "field"),
@@ -42,9 +46,10 @@ try {
   } else if (cmd === "series") {
     const scene = arg("scene");
     const language = arg("lang", "zh");
+    const aspectRatio = arg("ratio", "9:16");
     const count = Number(arg("count", "6"));
     const seed = Number(arg("seed", "1"));
-    const out = series({ scene, language, count, seed });
+    const out = series({ scene, language, count, seed, aspectRatio });
     console.log(JSON.stringify(out.map((x, i) => ({
       index: i + 1,
       scene_id: x.scene_id,
@@ -52,14 +57,14 @@ try {
       prompt: x.prompt
     })), null, 2));
   } else {
-    console.log(`Hidden Nature Window Skill v0.10.0
+    console.log(`Hidden Nature Window Skill v0.11.0
 
 Commands:
   scenes
-  generate --scene <id> [--lang zh|en|bilingual] [--seed N] [--json]
-  one-click [--lang zh|en|bilingual] [--seed N] [--json]
-  compose [--plant grass] [--location field] [--emotion calm] [--window "..."] [--hook "..."] [--lang zh|en|bilingual] [--seed N]
-  series --scene <id> [--count 6] [--lang zh|en|bilingual] [--seed N]
+  generate --scene <id> [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
+  one-click [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
+  compose [--plant grass] [--location field] [--emotion calm] [--window "..."] [--hook "..."] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
+  series --scene <id> [--count 6] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
 `);
   }
 } catch (error) {

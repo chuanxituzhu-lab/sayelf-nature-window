@@ -2,6 +2,13 @@ import { loadJsonProviders, loadComposer } from "./plugin-loader.mjs";
 
 export const LANGUAGES = ["zh", "en", "bilingual"];
 export const VISUAL_GRAMMAR = ["enter", "enclose", "guide", "reveal"];
+export const ASPECT_RATIOS = {
+  "1:1": { id: "1:1", width: 1, height: 1, name_zh: "方形", name_en: "Square", prompt_zh: "1:1方形画幅", prompt_en: "a square 1:1 frame" },
+  "4:5": { id: "4:5", width: 4, height: 5, name_zh: "人像竖屏", name_en: "Portrait", prompt_zh: "4:5人像竖屏画幅", prompt_en: "a portrait 4:5 frame" },
+  "3:4": { id: "3:4", width: 3, height: 4, name_zh: "标准竖屏", name_en: "Standard portrait", prompt_zh: "3:4标准竖屏画幅", prompt_en: "a standard portrait 3:4 frame" },
+  "9:16": { id: "9:16", width: 9, height: 16, name_zh: "短视频竖屏", name_en: "Short-video portrait", prompt_zh: "9:16短视频竖屏画幅", prompt_en: "a short-video portrait 9:16 frame" },
+  "16:9": { id: "16:9", width: 16, height: 9, name_zh: "宽屏横幅", name_en: "Widescreen", prompt_zh: "16:9宽屏横幅画幅", prompt_en: "a widescreen 16:9 frame" }
+};
 export const VISUAL_STYLES = {
   natural: {
     name_zh: "自然克制",
@@ -82,6 +89,10 @@ function buildColorPlan(scene, style) {
 function resolveVisualStyle(styleId = "natural") {
   const id = VISUAL_STYLES[styleId] ? styleId : "natural";
   return { id, ...VISUAL_STYLES[id] };
+}
+
+function resolveAspectRatio(aspectRatio = "9:16") {
+  return ASPECT_RATIOS[aspectRatio] || ASPECT_RATIOS["9:16"];
 }
 
 function buildAutoMatch(scene, style, overrides = {}) {
@@ -180,9 +191,9 @@ export function buildVariation(seed = Date.now()) {
   };
 }
 
-function zhPrompt(scene, variation, style, colorPlan) {
+function zhPrompt(scene, variation, style, colorPlan, aspectRatio) {
   return [
-    `真实自然摄影，9:16竖屏。场景：${scene.name_zh}。`,
+    `真实自然摄影，${aspectRatio.prompt_zh}。场景：${scene.name_zh}。`,
     `【进入】${scene.entry_zh}；本次机位变化：${variation.camera_micro.zh}。`,
     `【向上】${variation.upward_sky.zh}。`,
     `【包围】${scene.enclosure_zh}，让植物和自然元素占据画面大多数区域，并允许近镜叶片、枝条或花朵产生真实遮挡与自然失焦。`,
@@ -200,14 +211,14 @@ function zhPrompt(scene, variation, style, colorPlan) {
     `智能色彩调整：饱和度——${colorPlan.saturation.zh}；色相——${colorPlan.hue.zh}；明亮度——${colorPlan.brightness.zh}。`,
     `视觉表现（${style.name_zh}）：${style.zh}。`,
     `情绪：${scene.emotion_zh}。`,
-    `核心机制固定不变：进入 → 包围 → 引导 → 显露。变化只发生在时间、天气、机位微差、向上视角与天空情绪、窗口形态、前景遮挡、空间节奏、季节痕迹、视觉钩子状态和决定性瞬间。`,
+    `核心机制固定不变：进入 → 包围 → 引导 → 显露。变化只发生在画面比例、时间、天气、机位微差、向上视角与天空情绪、窗口形态、前景遮挡、空间节奏、季节痕迹、视觉钩子状态和决定性瞬间。`,
     `保持真实植物纹理、随机生长、自然缺损、可信相机位置与真实物理景深。`
   ].join("\n");
 }
 
-function enPrompt(scene, variation, style, colorPlan) {
+function enPrompt(scene, variation, style, colorPlan, aspectRatio) {
   return [
-    `Photorealistic nature photography, vertical 9:16. Scene: ${scene.name_en}.`,
+    `Photorealistic nature photography, ${aspectRatio.prompt_en}. Scene: ${scene.name_en}.`,
     `[ENTER] ${scene.entry_en}; this variation uses: ${variation.camera_micro.en}.`,
     `[LOOK UP] ${variation.upward_sky.en}.`,
     `[ENCLOSE] ${scene.enclosure_en}. Natural elements occupy most of the frame with believable foreground occlusion and optical focus falloff.`,
@@ -225,7 +236,7 @@ function enPrompt(scene, variation, style, colorPlan) {
     `Smart color adjustment: saturation — ${colorPlan.saturation.en}; hue — ${colorPlan.hue.en}; brightness — ${colorPlan.brightness.en}.`,
     `Visual treatment (${style.name_en}): ${style.en}.`,
     `Emotion: ${scene.emotion_en}.`,
-    `The core mechanism is frozen: Enter → Enclose → Guide → Reveal. Variation is allowed only in time, weather, camera micro-position, upward gaze and sky mood, window shape, foreground occlusion, depth rhythm, seasonal trace, hook state and decisive moment.`,
+    `The core mechanism is frozen: Enter → Enclose → Guide → Reveal. Variation is allowed only in aspect ratio, time, weather, camera micro-position, upward gaze and sky mood, window shape, foreground occlusion, depth rhythm, seasonal trace, hook state and decisive moment.`,
     `Keep authentic plant texture, random growth, natural imperfections, believable camera placement and real optical depth.`
   ].join("\n");
 }
@@ -233,26 +244,29 @@ function enPrompt(scene, variation, style, colorPlan) {
 export const NEGATIVE_ZH = "避免：普通平视花田、站立视角、俯拍、人工拱门、完美对称、人物抢主体、多个竞争焦点、假散景、梦幻光晕、过度HDR、塑料植物、CGI、3D渲染、摄影棚灯光、所有景物同时锐利、过度清洁和刻意摆拍。";
 export const NEGATIVE_EN = "Avoid: conventional eye-level flower-field photography, standing viewpoint, top-down view, artificial arches, perfect symmetry, dominant human subjects, multiple competing focal points, fake bokeh, fantasy glow, excessive HDR, plastic foliage, CGI, 3D-rendered look, studio lighting, everything tack-sharp, overly clean or staged vegetation.";
 
-export function generatePrompt({ scene, language = "zh", overrides = {}, seed = Date.now(), visualStyle = "natural" } = {}) {
+export function generatePrompt({ scene, language = "zh", overrides = {}, seed = Date.now(), visualStyle = "natural", aspectRatio = "9:16" } = {}) {
   if (!scene) throw new Error("scene is required");
   if (!LANGUAGES.includes(language)) throw new Error(`Unsupported language: ${language}`);
 
   const resolved = resolveScene(scene, overrides);
   const variation = buildVariation(seed);
   const style = resolveVisualStyle(visualStyle);
+  const ratio = resolveAspectRatio(aspectRatio);
   const colorPlan = buildColorPlan(resolved, style);
-  const prompt_zh = zhPrompt(resolved, variation, style, colorPlan);
-  const prompt_en = enPrompt(resolved, variation, style, colorPlan);
+  const prompt_zh = zhPrompt(resolved, variation, style, colorPlan, ratio);
+  const prompt_en = enPrompt(resolved, variation, style, colorPlan, ratio);
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.10.0",
+    version: "0.11.0",
     scene_id: scene,
     scene: resolved,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    aspect_ratio: ratio.id,
+    aspect_ratio_name: { zh: ratio.name_zh, en: ratio.name_en },
     upward_motif: variation.upward_sky,
     auto_match: buildAutoMatch(resolved, style, overrides),
     color_plan: colorPlan,
@@ -284,7 +298,8 @@ export async function generateComposedPrompt({
   input = {},
   language = "zh",
   seed = Date.now(),
-  visualStyle = "natural"
+  visualStyle = "natural",
+  aspectRatio = "9:16"
 } = {}) {
   if (!LANGUAGES.includes(language)) {
     throw new Error(`Unsupported language: ${language}`);
@@ -292,19 +307,22 @@ export async function generateComposedPrompt({
   const scene = await composeSceneSpec(input);
   const variation = buildVariation(seed);
   const style = resolveVisualStyle(visualStyle);
+  const ratio = resolveAspectRatio(aspectRatio);
   const colorPlan = buildColorPlan(scene, style);
-  const prompt_zh = zhPrompt(scene, variation, style, colorPlan);
-  const prompt_en = enPrompt(scene, variation, style, colorPlan);
+  const prompt_zh = zhPrompt(scene, variation, style, colorPlan, ratio);
+  const prompt_en = enPrompt(scene, variation, style, colorPlan, ratio);
 
   const result = {
     skill: "hidden-nature-window",
-    version: "0.10.0",
+    version: "0.11.0",
     source: "composed",
     scene,
     seed,
     variation,
     visual_style: style.id,
     visual_style_name: { zh: style.name_zh, en: style.name_en },
+    aspect_ratio: ratio.id,
+    aspect_ratio_name: { zh: ratio.name_zh, en: ratio.name_en },
     upward_motif: variation.upward_sky,
     auto_match: buildAutoMatch(scene, style),
     color_plan: colorPlan,
@@ -323,13 +341,13 @@ export async function generateComposedPrompt({
   return result;
 }
 
-export function oneClick({ language = "zh", seed = Date.now(), visualStyle = "natural" } = {}) {
+export function oneClick({ language = "zh", seed = Date.now(), visualStyle = "natural", aspectRatio = "9:16" } = {}) {
   const ids = listScenes().map(s => s.id);
   const sceneIndex = hashSeed(`${seed}:scene`) % ids.length;
-  return generatePrompt({ scene: ids[sceneIndex], language, seed, visualStyle });
+  return generatePrompt({ scene: ids[sceneIndex], language, seed, visualStyle, aspectRatio });
 }
 
-export function series({ scene, language = "zh", count = 6, seed = 1, overrides = {}, visualStyle = "natural" } = {}) {
+export function series({ scene, language = "zh", count = 6, seed = 1, overrides = {}, visualStyle = "natural", aspectRatio = "9:16" } = {}) {
   if (!Number.isInteger(count) || count < 1 || count > 50) {
     throw new Error("count must be an integer between 1 and 50");
   }
@@ -339,6 +357,7 @@ export function series({ scene, language = "zh", count = 6, seed = 1, overrides 
       language,
       overrides,
       visualStyle,
+      aspectRatio,
       seed: hashSeed(`${seed}:series:${i}`)
     })
   );

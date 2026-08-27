@@ -9,7 +9,7 @@
 
 ## 当前版本 / Current Release
 
-**v0.10.0 — 提示词驱动视觉模拟预览 / Prompt-driven Visual Simulation Preview**
+**v0.11.0 — 可选画面比例 / Selectable Aspect Ratios**
 
 本版本在保持 `Enter → Enclose → Guide → Reveal` 核心机制与既有架构不变的基础上，新增：
 
@@ -17,6 +17,7 @@
 - **普通用户自动匹配**：留空即可，系统根据场景和视觉表现自动匹配视觉钩子、情绪与隐藏窗口；复杂规则不需要用户理解。
 - **高级用户可选择自定义**：在高级设置中切换到“高级用户自定义”，可填写任意需要改变的项目；未填写的项目仍自动匹配。
 - **提示词驱动视觉模拟预览**：点击生成、随机生成或组合生成后，Prompt 右侧根据场景、天空情绪、视觉风格、色彩策略和随机种子绘制竖屏模拟图；每次生成自动变化，用于理解构图与色彩，不冒充最终照片。
+- **画面比例可选**：普通用户可直接选择 `1:1`、`4:5`、`3:4`、`9:16` 或 `16:9`；所选比例会同步写入提示词、API/MCP/CLI 输出和视觉模拟预览。
 - **完整 WebUI 美化**：以自然观察台为设计方向，重做页面层级、控件、按钮、卡片、预览区与移动端布局，让生成流程更清晰、更有视觉重点。
 - **复制成功反馈**：点击“复制”后显示明确的“复制成功”；没有内容或浏览器拒绝复制时，也会给出清晰提示。
 - **透明结果说明**：生成结果返回结构化 `auto_match`，明确显示匹配到的内容；需要时仍可展开高级设置手动覆盖。
@@ -24,7 +25,7 @@
 - **智能色彩策略**：根据场景色彩家族自动计算饱和度、色相和明亮度，并写入结构化 `color_plan`。
 - **版本化更新**：仓库原地持续更新；每次功能更新递增 SemVer 版本号，并同步运行时版本与 Git 标签。后续请以版本号和本节更新摘要为准。
 
-This release adds a prompt-driven visual simulation preview: the WebUI renders a changing vertical composition from the selected scene, upward sky mood, visual style, color plan, and seed, so users can understand framing and color before sending the prompt to an image model. It preserves the vertical insect-scale upward-discovery mechanism, frozen core, automatic matching, copy feedback, and two-column prompt/simulation workspace. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
+This release adds selectable aspect ratios — 1:1, 4:5, 3:4, 9:16, and 16:9 — and carries the choice through prompts, API/MCP/CLI output, and the prompt-driven visual simulation preview. The preview keeps changing with the selected scene, upward sky mood, visual style, color plan, ratio, and seed while preserving the vertical insect-scale discovery language, frozen core, automatic matching, and copy feedback. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
 
 ![Nature Window core overview](assets/nature-window-overview.png)
 
@@ -236,6 +237,12 @@ Enter → Enclose → Guide → Reveal
 - **视觉冲击 / High visual impact**：使用强烈但可信的明暗与色彩对照、夸张近景尺度和明确视觉钩子，形成第一眼冲击与深处发现。
 
 WebUI 默认使用“视觉冲击”，API 可通过 `visual_style` 传入 `natural`、`contrast` 或 `impact`。每次生成还会根据场景主色自动计算饱和度、色相对比和明亮度层次。所有调整只改变光影、色彩、尺度与焦点表达，不改变冻结的 Core Grammar。
+
+### 画面比例 / Aspect Ratio
+
+WebUI 可直接选择 `1:1`、`4:5`、`3:4`、`9:16` 或 `16:9`。API/MCP 使用 `aspect_ratio`，CLI 使用 `--ratio`；默认值为 `9:16`。画面比例只改变输出画幅和构图适配，不改变 `Enter → Enclose → Guide → Reveal` 核心机制。
+
+The WebUI supports `1:1`, `4:5`, `3:4`, `9:16`, and `16:9`. Use `aspect_ratio` in the API/MCP interfaces and `--ratio` in the CLI. The default is `9:16`; the choice changes framing and layout adaptation without changing the frozen core mechanism.
 
 ---
 

@@ -77,7 +77,7 @@
     .preview-panel { min-width:0; }
     .preview-title { display:flex; align-items:center; gap:8px; margin-bottom:8px; color:#d7e3d4; font-size:12px; font-weight:800; letter-spacing:.04em; }
     .preview-title::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 12px rgba(231,181,104,.7); }
-    .preview-frame { min-height:420px; aspect-ratio:9 / 14; display:grid; place-items:center; overflow:hidden; border:1px solid var(--line-strong); border-radius:15px; background:#07100c; box-shadow:inset 0 0 0 1px rgba(255,255,255,.02); }
+    .preview-frame { aspect-ratio:9 / 16; display:grid; place-items:center; overflow:hidden; border:1px solid var(--line-strong); border-radius:15px; background:#07100c; box-shadow:inset 0 0 0 1px rgba(255,255,255,.02); }
     .preview-frame img { width:100%; height:100%; object-fit:cover; display:block; }
     .preview-frame img[hidden], .preview-empty[hidden] { display:none; }
     .preview-empty { max-width:210px; padding:24px; color:var(--muted); font-size:13px; line-height:1.6; text-align:center; }
@@ -129,9 +129,19 @@
           <option value="impact" selected>视觉冲击 / High visual impact</option>
         </select>
       </div>
+      <div>
+        <label for="aspectRatio">画面比例 / Aspect Ratio</label>
+        <select id="aspectRatio">
+          <option value="9:16" selected>9:16 · 短视频竖屏 / Short-video portrait</option>
+          <option value="4:5">4:5 · 人像竖屏 / Portrait</option>
+          <option value="3:4">3:4 · 标准竖屏 / Standard portrait</option>
+          <option value="1:1">1:1 · 方形 / Square</option>
+          <option value="16:9">16:9 · 宽屏横幅 / Widescreen</option>
+        </select>
+      </div>
     </div>
 
-    <p class="helper">普通用户无需理解规则：留空即可，系统会根据场景和视觉表现自动匹配视觉钩子、情绪与隐藏窗口。</p>
+    <p class="helper">普通用户无需理解规则：选好场景和画面比例即可，系统会自动匹配视觉钩子、情绪、隐藏窗口与色彩策略。</p>
 
     <details>
       <summary>高级设置：选择自动匹配或自定义</summary>
@@ -202,7 +212,7 @@
     <div class="section-head">
       <div>
         <p class="kicker">03 / Reveal</p>
-        <h2>生成结果<span>Prompt + visual reference</span></h2>
+        <h2>生成结果<span>Prompt + ratio preview</span></h2>
       </div>
       <p class="panel-note">提示词与视觉参考并置，方便理解、复制和继续创作。</p>
     </div>
@@ -217,7 +227,7 @@
           <p id="previewEmpty" class="preview-empty">生成提示词后，这里会显示视觉参考图。</p>
           <img id="preview" src="/assets/nature-window-preview.png" alt="Nature Window visual simulation" hidden>
         </div>
-        <p id="previewCaption" class="small">预览图展示 Nature Window 的观看方式；生成后会依据提示词自动绘制视觉模拟图。</p>
+        <p id="previewCaption" class="small">预览图展示 Nature Window 的观看方式；生成后会依据提示词与所选画面比例自动绘制视觉模拟图。</p>
       </div>
     </div>
     <div class="actions">
