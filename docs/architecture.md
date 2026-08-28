@@ -1,4 +1,4 @@
-# Architecture
+# Architecture (v0.5)
 
 ```text
 AI Agent / Human
@@ -9,23 +9,26 @@ AI Agent / Human
       └── WebUI
           │
           ▼
-  Prompt Contract
+  OutputContract
           │
           ▼
  Hidden Nature Window Core
           │
-     Scene Catalog
+  Enter → Enclose → Guide → Reveal
           │
-          ▼
-  Prompt + Negative Prompt
+     ┌────┴────┐
+     ▼         ▼
+  Image    Storyboard
+  output   five shots
 ```
 
 Core owns only:
 - scene semantics
 - visual grammar
-- prompt compilation
-- validation-by-construction
+- deterministic variation
+- OutputContract dispatch
 
+Image and storyboard prompt prose belongs to output plugins.
 Interfaces own transport only.
 
-Image providers remain external.
+Image and video providers remain external.

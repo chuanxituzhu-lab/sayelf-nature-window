@@ -1,39 +1,67 @@
 #!/usr/bin/env node
-import { generatePrompt, listScenes, oneClick, series, generateComposedPrompt } from "../../core/compiler.mjs";
+import {
+  generateOutput,
+  listScenes,
+  oneClick,
+  series,
+  generateComposedOutput,
+  renderOutputContract
+} from "../../core/compiler.mjs";
 
 function arg(name, fallback) {
-  const i = process.argv.indexOf(`--${name}`);
-  return i >= 0 ? process.argv[i + 1] : fallback;
+  const index = process.argv.indexOf(`--${name}`);
+  return index >= 0 ? process.argv[index + 1] : fallback;
 }
+
+function seedArg(fallback) {
+  const raw = arg("seed");
+  return raw === undefined ? fallback : Number(raw);
+}
+
+function printOutput(output) {
+  if (process.argv.includes("--json")) {
+    console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+  if (Array.isArray(output)) {
+    console.log(output.map(item => item.contract ? renderOutputContract(item) : item.prompt).join("\n\n"));
+    return;
+  }
+  console.log(output.contract ? renderOutputContract(output) : output.prompt);
+}
+
 const cmd = process.argv[2] || "help";
 
 try {
   if (cmd === "scenes") {
     console.log(JSON.stringify(listScenes(), null, 2));
   } else if (cmd === "generate") {
-    const scene = arg("scene");
-    const language = arg("lang", "zh");
-    const aspectRatio = arg("ratio", "9:16");
-    const seedRaw = arg("seed");
-    const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
-    const out = generatePrompt({ scene, language, seed, aspectRatio });
-    console.log(process.argv.includes("--json") ? JSON.stringify(out, null, 2) : out.prompt);
+    const output = arg("output", "image");
+    const result = generateOutput({
+      scene: arg("scene"),
+      output,
+      language: arg("lang", "zh"),
+      visualStyle: arg("visual-style", "natural"),
+      aspectRatio: arg("ratio", "9:16"),
+      seed: seedArg(Date.now())
+    });
+    printOutput(result);
   } else if (cmd === "one-click") {
-    const language = arg("lang", "zh");
-    const aspectRatio = arg("ratio", "9:16");
-    const seedRaw = arg("seed");
-    const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
-    const out = oneClick({ language, seed, aspectRatio });
-    console.log(process.argv.includes("--json") ? JSON.stringify(out, null, 2) : out.prompt);
+    const result = oneClick({
+      output: arg("output", "image"),
+      language: arg("lang", "zh"),
+      visualStyle: arg("visual-style", "natural"),
+      aspectRatio: arg("ratio", "9:16"),
+      seed: seedArg(Date.now())
+    });
+    printOutput(result);
   } else if (cmd === "compose") {
-    const language = arg("lang", "zh");
-    const aspectRatio = arg("ratio", "9:16");
-    const seedRaw = arg("seed");
-    const seed = seedRaw === undefined ? Date.now() : Number(seedRaw);
-    const out = await generateComposedPrompt({
-      language,
-      seed,
-      aspectRatio,
+    const result = await generateComposedOutput({
+      output: arg("output", "image"),
+      language: arg("lang", "zh"),
+      visualStyle: arg("visual-style", "natural"),
+      aspectRatio: arg("ratio", "9:16"),
+      seed: seedArg(Date.now()),
       input: {
         mode: arg("mode", "manual"),
         plant: arg("plant", "grass"),
@@ -43,32 +71,30 @@ try {
         hook: arg("hook")
       }
     });
-    console.log(process.argv.includes("--json") ? JSON.stringify(out, null, 2) : out.prompt);
+    printOutput(result);
   } else if (cmd === "series") {
-    const scene = arg("scene");
-    const language = arg("lang", "zh");
-    const aspectRatio = arg("ratio", "9:16");
-    const count = Number(arg("count", "6"));
-    const seed = Number(arg("seed", "1"));
-    const out = series({ scene, language, count, seed, aspectRatio });
-    console.log(JSON.stringify(out.map((x, i) => ({
-      index: i + 1,
-      scene_id: x.scene_id,
-      seed: x.seed,
-      prompt: x.prompt
-    })), null, 2));
+    const result = series({
+      scene: arg("scene"),
+      output: arg("output", "image"),
+      language: arg("lang", "zh"),
+      count: Number(arg("count", "6")),
+      seed: Number(arg("seed", "1")),
+      visualStyle: arg("visual-style", "natural"),
+      aspectRatio: arg("ratio", "9:16")
+    });
+    printOutput(result);
   } else {
-    console.log(`Hidden Nature Window Skill v0.12.0
+    console.log(`Hidden Nature Window v0.13.0
 
 Commands:
   scenes
-  generate --scene <id> [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
-  one-click [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
-  compose [--mode auto|random|manual] [--plant grass] [--location field] [--emotion calm] [--window "..."] [--hook "..."] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
-  series --scene <id> [--count 6] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N]
+  generate --scene <id> [--output image|storyboard|both] [--ratio 9:16] [--visual-style natural|contrast|impact] [--lang zh|en|bilingual] [--seed N] [--json]
+  one-click [--output image|storyboard|both] [--ratio 9:16] [--visual-style natural|contrast|impact] [--lang zh|en|bilingual] [--seed N] [--json]
+  compose [--output image|storyboard|both] [--mode auto|random|manual] [--plant grass] [--location field] [--emotion calm] [--ratio 9:16] [--lang zh|en|bilingual] [--seed N] [--json]
+  series --scene <id> [--output image|storyboard|both] [--count 6] [--ratio 9:16] [--visual-style natural|contrast|impact] [--lang zh|en|bilingual] [--seed N] [--json]
 `);
   }
 } catch (error) {
-  console.error(JSON.stringify({ error: error.message, code: error.code || "ERROR" }, null, 2));
+  console.error(JSON.stringify({ error: error.message, code: error.code || "ERROR", details: error.details }, null, 2));
   process.exit(1);
 }

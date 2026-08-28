@@ -21,6 +21,22 @@
       "enabled": true,
       "module": "./plugins/composer-providers/rule-based.mjs",
       "priority": 100
+    },
+    {
+      "id": "image-output",
+      "type": "output-provider",
+      "output": "image",
+      "enabled": true,
+      "module": "./plugins/outputs/image/index.mjs",
+      "priority": 100
+    },
+    {
+      "id": "storyboard-output",
+      "type": "output-provider",
+      "output": "storyboard",
+      "enabled": true,
+      "module": "./plugins/outputs/storyboard/index.mjs",
+      "priority": 100
     }
   ]
 }

@@ -1,0 +1,44 @@
+{
+  "$id": "hidden-window.output-contract.v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "version",
+    "output",
+    "language",
+    "scene",
+    "seed",
+    "variation",
+    "visual_grammar",
+    "outputs",
+    "errors"
+  ],
+  "properties": {
+    "contract": { "const": "hidden-nature-window.output" },
+    "version": { "type": "string" },
+    "output": { "enum": ["image", "storyboard", "both"] },
+    "language": { "enum": ["zh", "en", "bilingual"] },
+    "source": { "enum": ["preset", "composed"] },
+    "scene": { "type": "object" },
+    "seed": { "type": ["number", "string"] },
+    "visual_grammar": {
+      "const": ["enter", "enclose", "guide", "reveal"]
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "object",
+          "required": ["type", "format", "prompt", "prompt_zh", "prompt_en"]
+        },
+        "storyboard": {
+          "type": "object",
+          "required": ["type", "format", "shot_count", "duration_seconds", "stages", "shots"]
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "errors": { "type": "array" }
+  }
+}

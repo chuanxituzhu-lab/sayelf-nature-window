@@ -3,9 +3,9 @@
 > **进入自然，不是站在自然之外观看。**
 > **Enter nature instead of observing it from outside.**
 
-`Nature Window` 是一个面向 AI Agent 的自然视觉叙事 Skill。它将一种稳定的自然摄影视觉机制封装为可调用、可组合、可扩展的提示词能力，让 Codex、Claude Code、WorkBuddy 等 Agent 可以通过 MCP、CLI 或 API 直接生成具有统一视觉 DNA、但场景与表达持续变化的中英文图像提示词。
+`Nature Window` 是一个面向 AI Agent 的自然视觉叙事 Skill。它将一种稳定的自然摄影视觉机制封装为可调用、可组合、可扩展的输出能力，让 Codex、Claude Code、WorkBuddy 等 Agent 可以通过 MCP、CLI 或 API 从同一个 `SceneSpec` 选择图片提示词、五镜头视频分镜，或两者同时生成。
 
-`Nature Window` is an AI-agent-native visual narrative skill for nature imagery. It turns a stable photographic grammar into a callable, composable, and extensible prompt capability. Agents such as Codex, Claude Code, and WorkBuddy can generate Chinese or English prompts through MCP, CLI, or HTTP API while preserving one visual DNA across many different scenes.
+`Nature Window` is an AI-agent-native visual narrative skill for nature imagery. It turns a stable photographic grammar into a callable, composable, and extensible output capability. Agents such as Codex, Claude Code, and WorkBuddy can select an image prompt, a five-shot video storyboard, or both through MCP, CLI, or HTTP API while preserving one visual DNA across many different scenes.
 
 ## 当前版本 / Current Release
 
@@ -28,9 +28,35 @@
 
 This release adds three dynamic scene-composition modes: automatic selection chooses a coordinated plant–location–emotion set, random combination independently samples the three dimensions, and manual selection preserves precise control for advanced users. All modes remain seed-reproducible and carry the result through prompts, the visual simulation preview, and the existing API/MCP/CLI interfaces. Selectable aspect ratios, upward insect-scale discovery, automatic matching, the frozen core, and copy feedback remain intact. Future releases update this repository in place and are identified by an incremented SemVer version and matching Git tag.
 
+**v0.13.0 — One Core, Two Outputs / 一核两出口**
+
+本次 v0.5 输出契约里程碑在现有 v0.12.0 能力之上完成收口：同一个 `SceneSpec` 通过统一 `OutputContract` 选择 `image`、`storyboard` 或 `both`。图片提示词编译器位于 `plugins/outputs/image`；分镜编译器位于 `plugins/outputs/storyboard`，固定输出 `ENTER / ENCLOSE / GUIDE / REVEAL / HOLD` 五镜头，其中 `HOLD` 是时间化停留，不是新的 Core 阶段。输出插件独立失败并记录在 `errors`，健康出口继续返回。
+
+This v0.5 output-contract milestone builds on v0.12.0: one `SceneSpec` now selects `image`, `storyboard`, or `both` through one `OutputContract`. Image prompt compilation lives in `plugins/outputs/image`; storyboard compilation lives in `plugins/outputs/storyboard` and always returns five shots — `ENTER / ENCLOSE / GUIDE / REVEAL / HOLD`. `HOLD` is a temporal coda, not a new Core stage. Output failures are isolated in `errors`, so a healthy sibling output remains available.
+
 ![Nature Window core overview](assets/nature-window-overview.png)
 
 ![Nature Window visual preview](assets/nature-window-preview.png)
+
+## One Core, Two Outputs / 一核两出口
+
+```text
+                    SceneSpec
+                       │
+                       ▼
+       Visual Grammar Core（只保留四段机制）
+            Enter → Enclose → Guide → Reveal
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+        IMAGE OUTPUT       STORYBOARD OUTPUT
+        图片提示词           五镜头视频分镜
+        decisive frame      ENTER / ENCLOSE / GUIDE / REVEAL / HOLD
+```
+
+The Core decides how the viewer discovers the world. Output plugins decide how that same SceneSpec is expressed: one decisive image frame, or a minimum five-shot temporal storyboard. `HOLD` is a storyboard coda, not a new Core stage.
+
+核心只决定“如何进入并发现世界”。输出插件负责表达形式：一帧决定性的图片提示词，或最小五镜头时间化分镜。`HOLD` 是分镜的停留尾镜，不是新的核心阶段。
 
 ---
 
@@ -127,26 +153,28 @@ Human / AI Agent
               ▼
         Core Compiler
               │
-     ┌────────┼─────────┐
-     │        │         │
-   Scene   Variation  Composer
-  Provider  Provider   Provider
-     │        │         │
-     └────────┼─────────┘
+     ┌────────┼──────────┐
+     │        │          │
+   Scene   Variation   Composer
+  Provider  Provider    Provider
+     │        │          │
+     └────────┼──────────┘
               ▼
- Enter → Enclose → Guide → Reveal
+  OutputContract Dispatcher
               │
-              ▼
-     Chinese / English Prompt
+       ┌──────┴──────┐
+       ▼             ▼
+     Image       Storyboard
+     图片          视频分镜
 ```
 
 ### Core 只负责 / Core Owns
 
 - 冻结视觉语法 / frozen visual grammar
-- Prompt 编译 / prompt compilation
+- SceneSpec resolution and deterministic variation / SceneSpec 解析与确定性变化
 - Plugin Contract
 - Provider Registry
-- 可复现的受控变化 / reproducible controlled variation
+- OutputContract dispatch and validation / OutputContract 分发与校验
 
 ### Plugin 负责 / Plugins Own
 
@@ -154,6 +182,8 @@ Human / AI Agent
 - 植物与生态系统 / plants and ecosystems
 - 变体轴 / variation axes
 - 动态场景组合 / dynamic scene composition
+- 图片提示词 / image prompt compilation
+- 五镜头视频分镜 / five-shot storyboard compilation
 
 ### Adapter 负责 / Adapters Own
 
@@ -162,6 +192,31 @@ Human / AI Agent
 - HTTP API
 - WebUI
 - AI Agent integration
+
+## 统一输出契约 / OutputContract
+
+Every generation request accepts `output: image | storyboard | both` and returns the same machine-readable envelope:
+
+每个生成请求都接受 `output: image | storyboard | both`，并返回统一结构：
+
+```json
+{
+  "contract": "hidden-nature-window.output",
+  "version": "0.5.0",
+  "output": "both",
+  "language": "bilingual",
+  "scene": "shared SceneSpec",
+  "seed": 2026,
+  "variation": "shared deterministic variation",
+  "visual_grammar": ["enter", "enclose", "guide", "reveal"],
+  "outputs": { "image": "...", "storyboard": "..." },
+  "errors": []
+}
+```
+
+The `scene`, `variation`, `seed`, and `visual_grammar` are shared by both outputs. A failed output plugin is reported in `errors` without discarding a healthy sibling output.
+
+图片与分镜共享 `scene`、`variation`、`seed` 和 `visual_grammar`。一个输出插件失败时，错误进入 `errors`，不会丢弃健康的另一个出口。
 
 ---
 
@@ -286,6 +341,9 @@ hidden_window_generate_series
 hidden_window_compose_scene
 ```
 
+Each generation tool accepts `output: "image"`, `"storyboard"`, or `"both"`.
+每个生成工具都可以选择 `image`、`storyboard` 或 `both`。
+
 Agent 可以直接理解类似指令：
 
 ```text
@@ -302,7 +360,7 @@ Generate a lotus hidden-window prompt in English.
 node interfaces/cli/index.mjs scenes
 
 node interfaces/cli/index.mjs generate \
-  --scene lotus_pond \
+  --scene lotus_pond --output both \
   --lang zh
 
 node interfaces/cli/index.mjs series \
@@ -311,6 +369,7 @@ node interfaces/cli/index.mjs series \
   --lang bilingual
 
 node interfaces/cli/index.mjs one-click \
+  --output storyboard \
   --lang en
 
 node interfaces/cli/index.mjs compose \
@@ -322,10 +381,10 @@ node interfaces/cli/index.mjs compose \
 
 ```text
 GET  /v1/scenes
-POST /v1/prompt
-POST /v1/one-click
-POST /v1/series
-POST /v1/compose
+POST /v1/prompt       { "scene": "lotus_pond", "output": "both", "seed": 2026 }
+POST /v1/one-click    { "output": "storyboard" }
+POST /v1/series       { "scene": "lotus_pond", "output": "image" }
+POST /v1/compose      { "output": "both", "input": { "plant": "bamboo" } }
 ```
 
 ---

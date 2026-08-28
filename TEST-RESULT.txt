@@ -1,94 +1,61 @@
 TAP version 13
 # Subtest: scene catalog is non-empty
 ok 1 - scene catalog is non-empty
-  ---
-  duration_ms: 2.159208
-  type: 'test'
-  ...
 # Subtest: visual grammar remains frozen
 ok 2 - visual grammar remains frozen
-  ---
-  duration_ms: 3.117373
-  type: 'test'
-  ...
 # Subtest: Chinese prompt compiles
 ok 3 - Chinese prompt compiles
-  ---
-  duration_ms: 10.318676
-  type: 'test'
-  ...
 # Subtest: English prompt compiles
 ok 4 - English prompt compiles
-  ---
-  duration_ms: 1.316616
-  type: 'test'
-  ...
+# Subtest: upward sky motif adds insect-scale vertical discovery without changing the core
+ok 5 - upward sky motif adds insect-scale vertical discovery without changing the core
+# Subtest: aspect ratio is selectable across prompts and falls back safely
+ok 6 - aspect ratio is selectable across prompts and falls back safely
+# Subtest: visual impact profiles strengthen treatment without changing the core grammar
+ok 7 - visual impact profiles strengthen treatment without changing the core grammar
+# Subtest: color plan adapts to scene hue family and exposes saturation, hue and brightness
+ok 8 - color plan adapts to scene hue family and exposes saturation, hue and brightness
+# Subtest: automatic matching is the default and manual overrides remain optional
+ok 9 - automatic matching is the default and manual overrides remain optional
 # Subtest: overrides are applied
-ok 5 - overrides are applied
-  ---
-  duration_ms: 0.840308
-  type: 'test'
-  ...
+ok 10 - overrides are applied
 # Subtest: one-click can be deterministic with seed
-ok 6 - one-click can be deterministic with seed
-  ---
-  duration_ms: 27.305154
-  type: 'test'
-  ...
+ok 11 - one-click can be deterministic with seed
 # Subtest: same scene can produce different series prompts while grammar stays frozen
-ok 7 - same scene can produce different series prompts while grammar stays frozen
-  ---
-  duration_ms: 23.678701
-  type: 'test'
-  ...
+ok 12 - same scene can produce different series prompts while grammar stays frozen
 # Subtest: same scene + same seed stays reproducible
-ok 8 - same scene + same seed stays reproducible
-  ---
-  duration_ms: 1.939632
-  type: 'test'
-  ...
+ok 13 - same scene + same seed stays reproducible
 # Subtest: expanded scene library contains distinct ecosystems
-ok 9 - expanded scene library contains distinct ecosystems
-  ---
-  duration_ms: 1.041246
-  type: 'test'
-  ...
+ok 14 - expanded scene library contains distinct ecosystems
 # Subtest: expanded variations never mutate frozen grammar
-ok 10 - expanded variations never mutate frozen grammar
-  ---
-  duration_ms: 12.606946
-  type: 'test'
-  ...
+ok 15 - expanded variations never mutate frozen grammar
 # Subtest: scene catalog now loads through plugin registry
-ok 11 - scene catalog now loads through plugin registry
-  ---
-  duration_ms: 0.438018
-  type: 'test'
-  ...
+ok 16 - scene catalog now loads through plugin registry
 # Subtest: dynamic composer creates a valid scene without touching core grammar
-ok 12 - dynamic composer creates a valid scene without touching core grammar
-  ---
-  duration_ms: 84.554199
-  type: 'test'
-  ...
+ok 17 - dynamic composer creates a valid scene without touching core grammar
+# Subtest: dynamic composer supports automatic, random and manual selection modes
+ok 18 - dynamic composer supports automatic, random and manual selection modes
 # Subtest: composed prompt preserves frozen core grammar
-ok 13 - composed prompt preserves frozen core grammar
-  ---
-  duration_ms: 1.470324
-  type: 'test'
-  ...
+ok 19 - composed prompt preserves frozen core grammar
 # Subtest: composer supports reproducible series diversity by seed
-ok 14 - composer supports reproducible series diversity by seed
-  ---
-  duration_ms: 24.918852
-  type: 'test'
-  ...
-1..14
-# tests 14
+ok 20 - composer supports reproducible series diversity by seed
+# Subtest: unified output contract selects image, storyboard, or both
+ok 21 - unified output contract selects image, storyboard, or both
+# Subtest: storyboard output is exactly five ordered shots with image and video directions
+ok 22 - storyboard output is exactly five ordered shots with image and video directions
+# Subtest: image and storyboard from both share the same SceneSpec, variation, and seed
+ok 23 - image and storyboard from both share the same SceneSpec, variation, and seed
+# Subtest: both output is byte-reproducible for the same SceneSpec and seed
+ok 24 - both output is byte-reproducible for the same SceneSpec and seed
+# Subtest: a failed output plugin does not block a healthy sibling output
+ok 25 - a failed output plugin does not block a healthy sibling output
+# Subtest: composer can feed both outputs through the same contract
+ok 26 - composer can feed both outputs through the same contract
+1..26
+# tests 26
 # suites 0
-# pass 14
+# pass 26
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 411.730082

@@ -16,21 +16,38 @@ export function enabledPlugins(type) {
     .sort((a, b) => (b.priority || 0) - (a.priority || 0));
 }
 
-export function loadJsonProviders(type) {
+export function loadJsonProviders(type, { onError } = {}) {
   const plugins = enabledPlugins(type);
   const merged = {};
   for (const plugin of plugins) {
     if (!plugin.source) continue;
-    const full = path.resolve(ROOT, "plugins", plugin.source);
-    const data = JSON.parse(fs.readFileSync(full, "utf8"));
-    Object.assign(merged, data);
+    try {
+      const full = path.resolve(ROOT, "plugins", plugin.source);
+      const data = JSON.parse(fs.readFileSync(full, "utf8"));
+      Object.assign(merged, data);
+    } catch (error) {
+      onError?.({
+        plugin: plugin.id,
+        code: "PROVIDER_LOAD_FAILED",
+        message: error.message
+      });
+    }
   }
   return merged;
 }
 
 export async function loadComposer() {
-  const plugin = enabledPlugins("composer-provider")[0];
-  if (!plugin) throw new Error("No enabled composer-provider");
-  const full = path.resolve(ROOT, plugin.module.replace("./plugins/", "plugins/"));
-  return import(pathToFileURL(full).href);
+  const errors = [];
+  for (const plugin of enabledPlugins("composer-provider")) {
+    try {
+      const full = path.resolve(ROOT, plugin.module.replace("./plugins/", "plugins/"));
+      return await import(pathToFileURL(full).href);
+    } catch (error) {
+      errors.push({ plugin: plugin.id, code: "PROVIDER_LOAD_FAILED", message: error.message });
+    }
+  }
+  const error = new Error(errors.map(item => item.message).join("; ") || "No enabled composer-provider");
+  error.code = "COMPOSER_UNAVAILABLE";
+  error.details = errors;
+  throw error;
 }

@@ -1,6 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { generatePrompt, listScenes, oneClick, series, VISUAL_GRAMMAR, ASPECT_RATIOS, generateComposedPrompt, composeSceneSpec } from "../core/compiler.mjs";
+import {
+  generatePrompt,
+  generateOutput,
+  listScenes,
+  oneClick,
+  series,
+  VISUAL_GRAMMAR,
+  ASPECT_RATIOS,
+  generateComposedPrompt,
+  generateComposedOutput,
+  composeSceneSpec
+} from "../core/compiler.mjs";
+import { compileOutputs } from "../core/output-dispatcher.mjs";
+import * as imageOutput from "../plugins/outputs/image/index.mjs";
 
 test("scene catalog is non-empty", () => {
   assert.ok(listScenes().length >= 24);
@@ -61,7 +74,6 @@ test("visual impact profiles strengthen treatment without changing the core gram
   assert.match(out.prompt, /强烈但可信的明暗对比/);
   assert.deepEqual(out.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
 });
-
 test("color plan adapts to scene hue family and exposes saturation, hue and brightness", () => {
   const green = generatePrompt({ scene: "lotus_pond", language: "zh", visualStyle: "impact", seed: 20 });
   assert.equal(green.color_plan.family, "green");
@@ -220,4 +232,89 @@ test("composer supports reproducible series diversity by seed", async () => {
   });
   assert.notEqual(a.prompt, b.prompt);
   assert.deepEqual(a.visual_grammar, b.visual_grammar);
+});
+
+
+test("unified output contract selects image, storyboard, or both", () => {
+  const image = generateOutput({ scene: "lotus_pond", output: "image", language: "en", seed: 5050 });
+  const storyboard = generateOutput({ scene: "lotus_pond", output: "storyboard", language: "en", seed: 5050 });
+  const both = generateOutput({ scene: "lotus_pond", output: "both", language: "en", seed: 5050 });
+
+  assert.equal(image.contract, "hidden-nature-window.output");
+  assert.deepEqual(Object.keys(image.outputs), ["image"]);
+  assert.deepEqual(Object.keys(storyboard.outputs), ["storyboard"]);
+  assert.deepEqual(Object.keys(both.outputs), ["image", "storyboard"]);
+  assert.deepEqual(both.errors, []);
+  assert.deepEqual(both.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
+});
+
+test("storyboard output is exactly five ordered shots with image and video directions", () => {
+  const out = generateOutput({ scene: "bamboo_after_rain", output: "storyboard", language: "bilingual", seed: 6060 });
+  const storyboard = out.outputs.storyboard;
+
+  assert.equal(storyboard.shot_count, 5);
+  assert.equal(storyboard.duration_seconds, 15);
+  assert.deepEqual(storyboard.stages, ["ENTER", "ENCLOSE", "GUIDE", "REVEAL", "HOLD"]);
+  assert.deepEqual(storyboard.shots.map(shot => shot.stage), storyboard.stages);
+  for (const shot of storyboard.shots) {
+    assert.ok(shot.image_prompt_zh);
+    assert.ok(shot.image_prompt_en);
+    assert.ok(shot.video_prompt_zh);
+    assert.ok(shot.video_prompt_en);
+  }
+});
+
+test("image and storyboard from both share the same SceneSpec, variation, and seed", () => {
+  const image = generateOutput({ scene: "fern_forest", output: "image", language: "zh", seed: 7070 });
+  const storyboard = generateOutput({ scene: "fern_forest", output: "storyboard", language: "zh", seed: 7070 });
+  const both = generateOutput({ scene: "fern_forest", output: "both", language: "zh", seed: 7070 });
+
+  assert.deepEqual(both.scene, image.scene);
+  assert.deepEqual(both.scene, storyboard.scene);
+  assert.deepEqual(both.variation, image.variation);
+  assert.deepEqual(both.variation, storyboard.variation);
+  assert.equal(both.outputs.image.prompt, image.outputs.image.prompt);
+  assert.deepEqual(both.outputs.storyboard.shots, storyboard.outputs.storyboard.shots);
+});
+
+test("both output is byte-reproducible for the same SceneSpec and seed", () => {
+  const args = { scene: "winter_branches", output: "both", language: "bilingual", seed: 8080 };
+  assert.equal(JSON.stringify(generateOutput(args)), JSON.stringify(generateOutput(args)));
+});
+
+test("a failed output plugin does not block a healthy sibling output", () => {
+  const base = generateOutput({ scene: "lotus_pond", output: "image", language: "en", seed: 9090 });
+  const failingStoryboard = {
+    id: "storyboard",
+    outputType: "storyboard",
+    compile() {
+      throw new Error("simulated storyboard failure");
+    }
+  };
+  const out = compileOutputs({
+    source: "preset",
+    scene_id: base.scene_id,
+    scene: base.scene,
+    seed: base.seed,
+    variation: base.variation,
+    language: base.language
+  }, { output: "both", plugins: [imageOutput, failingStoryboard] });
+
+  assert.ok(out.outputs.image);
+  assert.equal(out.outputs.storyboard, undefined);
+  assert.equal(out.errors[0].output, "storyboard");
+  assert.equal(out.errors[0].code, "OUTPUT_PLUGIN_FAILED");
+});
+
+test("composer can feed both outputs through the same contract", async () => {
+  const out = await generateComposedOutput({
+    input: { plant: "bamboo", location: "mountain", emotion: "longing" },
+    output: "both",
+    language: "en",
+    seed: 10010
+  });
+  assert.equal(out.source, "composed");
+  assert.ok(out.outputs.image.prompt);
+  assert.equal(out.outputs.storyboard.shots.length, 5);
+  assert.deepEqual(out.visual_grammar, ["enter", "enclose", "guide", "reveal"]);
 });

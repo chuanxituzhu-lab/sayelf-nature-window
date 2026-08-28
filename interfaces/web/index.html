@@ -140,6 +140,14 @@
           <option value="16:9">16:9 · 宽屏横幅 / Widescreen</option>
         </select>
       </div>
+      <div>
+        <label for="outputType">输出 / Output</label>
+        <select id="outputType">
+          <option value="image" selected>图片提示词 / Image prompt</option>
+          <option value="storyboard">视频分镜 / Video storyboard</option>
+          <option value="both">图片 + 视频分镜 / Both</option>
+        </select>
+      </div>
     </div>
 
     <p class="helper">普通用户无需理解规则：选好场景和画面比例即可，系统会自动匹配视觉钩子、情绪、隐藏窗口与色彩策略。</p>
@@ -224,7 +232,7 @@
     </div>
     <div class="preview-layout">
       <div>
-        <label for="output">Prompt</label>
+        <label for="output">Prompt / Output</label>
         <textarea id="output" readonly></textarea>
       </div>
       <div class="preview-panel">

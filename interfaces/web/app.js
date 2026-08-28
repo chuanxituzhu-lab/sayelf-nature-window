@@ -2,6 +2,7 @@ const sceneEl = document.querySelector("#scene");
 const langEl = document.querySelector("#language");
 const visualStyleEl = document.querySelector("#visualStyle");
 const aspectRatioEl = document.querySelector("#aspectRatio");
+const outputTypeEl = document.querySelector("#outputType");
 const matchModeEl = document.querySelector("#matchMode");
 const manualFieldsEl = document.querySelector("#manualFields");
 const composeModeEl = document.querySelector("#composeMode");
@@ -221,11 +222,25 @@ function showCopyStatus(message, isError = false) {
   }
 }
 
+function renderContract(data) {
+  if (!data.contract) return data.prompt || "";
+  return Object.values(data.outputs || {}).map(output => output.text || output.prompt || JSON.stringify(output, null, 2)).join("\n\n");
+}
+
+function displayOutput(data) {
+  outputEl.value = renderContract(data);
+}
+
+function outputView(data) {
+  return { ...data, ...(data.outputs?.image || {}) };
+}
+
 function updatePreview(data) {
-  const sceneName = data.scene?.name_zh || data.scene?.name_en || "Nature Window";
-  const [ratioWidth, ratioHeight] = parsePreviewRatio(data.aspect_ratio);
+  const view = outputView(data);
+  const sceneName = view.scene?.name_zh || view.scene?.name_en || "Nature Window";
+  const [ratioWidth, ratioHeight] = parsePreviewRatio(view.aspect_ratio);
   previewFrameEl.style.aspectRatio = `${ratioWidth} / ${ratioHeight}`;
-  previewEl.src = previewDataUri(data);
+  previewEl.src = previewDataUri(view);
   previewEl.alt = `${sceneName} Nature Window visual simulation`;
   previewEl.hidden = false;
   previewEmptyEl.hidden = true;
@@ -269,7 +284,8 @@ function syncCompositionSelection(data) {
 }
 
 function updateMeta(data, prefix) {
-  const match = data.auto_match;
+  const view = outputView(data);
+  const match = view.auto_match;
   if (!match) {
     metaEl.textContent = prefix;
     return;
@@ -277,11 +293,11 @@ function updateMeta(data, prefix) {
   const hook = langEl.value === "en" ? match.visual_hook.en : match.visual_hook.zh;
   const emotion = langEl.value === "en" ? match.emotion.en : match.emotion.zh;
   const windowText = langEl.value === "en" ? match.hidden_window.en : match.hidden_window.zh;
-  const upward = data.upward_motif
-    ? (langEl.value === "en" ? data.upward_motif.en : data.upward_motif.zh)
+  const upward = view.upward_motif
+    ? (langEl.value === "en" ? view.upward_motif.en : view.upward_motif.zh)
     : "";
   const upwardLine = upward ? `\n向上视角：${upward}` : "";
-  const ratioLine = `\n画面比例：${data.aspect_ratio || "9:16"}`;
+  const ratioLine = `\n画面比例：${view.aspect_ratio || "9:16"}`;
   const composition = data.composition_mode || data.scene?.composition_mode;
   const compositionLine = composition ? `\n组合方式：${composition.name_zh}` : "";
   metaEl.textContent = `${prefix} · ${match.mode_zh}${ratioLine}${compositionLine}\n视觉钩子：${hook} · 情绪：${emotion} · 隐藏窗口：${windowText}${upwardLine}`;
@@ -307,6 +323,7 @@ async function generate() {
     language: langEl.value,
     visual_style: visualStyleEl.value,
     aspect_ratio: aspectRatioEl.value,
+    output: outputTypeEl.value,
     overrides: getManualOverrides()
   };
   const data = await json("/v1/prompt", {
@@ -314,7 +331,7 @@ async function generate() {
     headers: {"content-type":"application/json"},
     body: JSON.stringify(body)
   });
-  outputEl.value = data.prompt;
+  displayOutput(data);
   updatePreview(data);
   updateMeta(data, `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`);
 }
@@ -323,10 +340,10 @@ async function oneClickPrompt() {
   const data = await json("/v1/one-click", {
     method: "POST",
     headers: {"content-type":"application/json"},
-    body: JSON.stringify({ language: langEl.value, visual_style: visualStyleEl.value, aspect_ratio: aspectRatioEl.value })
+    body: JSON.stringify({ language: langEl.value, visual_style: visualStyleEl.value, aspect_ratio: aspectRatioEl.value, output: outputTypeEl.value })
   });
   sceneEl.value = data.scene_id;
-  outputEl.value = data.prompt;
+  displayOutput(data);
   updatePreview(data);
   updateMeta(data, `${data.scene.name_zh} / ${data.scene.name_en} · ${data.language}`);
 }
@@ -362,6 +379,7 @@ async function composeScenePrompt() {
     language: langEl.value,
     visual_style: visualStyleEl.value,
     aspect_ratio: aspectRatioEl.value,
+    output: outputTypeEl.value,
     input: {
       mode: composeModeEl.value,
       plant: plantEl.value,
@@ -374,7 +392,7 @@ async function composeScenePrompt() {
     headers: {"content-type":"application/json"},
     body: JSON.stringify(body)
   });
-  outputEl.value = data.prompt;
+  displayOutput(data);
   syncCompositionSelection(data);
   updatePreview(data);
   updateMeta(data, `动态组合 · ${data.scene.name_zh} / ${data.scene.name_en}`);
@@ -385,6 +403,7 @@ async function composeSeriesPrompt() {
     language: langEl.value,
     visual_style: visualStyleEl.value,
     aspect_ratio: aspectRatioEl.value,
+    output: outputTypeEl.value,
     input: {
       mode: composeModeEl.value,
       plant: plantEl.value,
@@ -402,7 +421,7 @@ async function composeSeriesPrompt() {
       body: JSON.stringify({...base, seed: seedBase + i})
     });
     lastData = data;
-    items.push(`### ${i+1}\n${data.prompt}`);
+    items.push(`### ${i+1}\n${renderContract(data)}`);
   }
   outputEl.value = items.join("\n\n");
   syncCompositionSelection(lastData);

@@ -1,5 +1,6 @@
 {
   "scene": "winter_branches",
+  "output": "both",
   "language": "zh",
   "overrides": {
     "emotion": "思念",

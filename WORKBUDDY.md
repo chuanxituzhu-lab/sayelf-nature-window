@@ -12,4 +12,4 @@ Recommended command:
 Fallback API:
 `npm run api`
 
-The Skill compiles prompts only; image-provider execution remains a separate adapter/provider.
+Select `image`, `storyboard`, or `both` in the request. The Skill returns an OutputContract; image/video model execution remains a separate adapter/provider.

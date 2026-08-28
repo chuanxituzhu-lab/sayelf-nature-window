@@ -1,0 +1,11 @@
+{
+  "contract": "hidden-window.output-provider",
+  "version": "1.0",
+  "required": ["id", "type", "enabled", "module", "output"],
+  "allowed_type": "output-provider",
+  "output": "image | storyboard",
+  "module_api": {
+    "id": "output id",
+    "compile": "function(context) -> output fragment"
+  }
+}

@@ -6,6 +6,8 @@ Transform a normal natural environment into an immersive hidden-world photograph
 
 **Enter → Enclose → Guide → Reveal**
 
+The same `SceneSpec` can compile to `image`, `storyboard`, or `both`. A storyboard is always five shots: `ENTER / ENCLOSE / GUIDE / REVEAL / HOLD`; `HOLD` is output timing, not a new Core stage.
+
 The camera must enter the environment rather than observe it from outside.
 
 ## Required decisions
@@ -52,8 +54,10 @@ it should call the Skill core through MCP, CLI, or HTTP rather than manually rec
 - `hidden_window_generate_prompt`
 - `hidden_window_one_click`
 
+Generation tools accept the `output` choice: `image`, `storyboard`, or `both`.
 
-## v0.4 modular rule
+
+## v0.5 modular rule
 
 Never add new content families directly into Core.
 
@@ -61,6 +65,8 @@ Use:
 - Scene Provider for preset ecosystems.
 - Variation Provider for controlled expression diversity.
 - Composer Provider for natural-language/dynamic scene creation.
+- Image Output Provider for one decisive image prompt.
+- Storyboard Output Provider for five-shot image/video directions.
 - Interface Adapter for MCP/CLI/API/WebUI.
 
 The frozen visual mechanism must remain unchanged.

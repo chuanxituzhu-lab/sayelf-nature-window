@@ -8,6 +8,8 @@ Preferred:
 Fallback:
 - `node interfaces/cli/index.mjs scenes`
 - `node interfaces/cli/index.mjs generate --scene bamboo_forest --lang zh`
+- `node interfaces/cli/index.mjs generate --scene bamboo_forest --output both --lang zh`
 - `node interfaces/cli/index.mjs one-click --lang en`
 
 Do not re-implement the compiler in the conversation. Call the tool and return its generated prompt.
+Choose `image`, `storyboard`, or `both` with the output selector and return the unified OutputContract when structured data is needed.
